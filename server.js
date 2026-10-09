@@ -7,7 +7,7 @@ const PORT = process.env.PORT || 3000;
 app.disable("x-powered-by");
 app.use(express.json({ limit: "20kb" }));
 
-// Serve the VELNORA website
+// Serve the website
 app.use(express.static(__dirname));
 
 // Main page
@@ -15,7 +15,7 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });
 
-// Server status
+// Health check
 app.get("/api/health", (req, res) => {
   res.json({
     success: true,
@@ -26,7 +26,7 @@ app.get("/api/health", (req, res) => {
   });
 });
 
-// AI endpoint — ready for a future free AI integration
+// AI endpoint placeholder
 app.post("/api/chat", (req, res) => {
   const message = req.body?.message;
 
@@ -48,6 +48,11 @@ app.post("/api/chat", (req, res) => {
     success: false,
     aiConnected: false,
     reply:
-      "VELNORA is running, but its AI engine has not been connected yet. " +
-      "A suitable AI provider must be configured before real AI responses are available."
- 
+      "VELNORA is running, but its AI engine has not been connected yet."
+  });
+});
+
+// Start server
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`VELNORA is running on port ${PORT}`);
+});
