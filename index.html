@@ -1,0 +1,2015 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0b0d14">
+  <meta name="description" content="VELNORA — An intelligent workspace for planning, execution, and business growth.">
+  <title>VELNORA — Intelligent Operating Platform</title>
+
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0b0d14;
+      --surface: #11141e;
+      --surface-2: #171b28;
+      --surface-3: #202536;
+      --border: rgba(255,255,255,.085);
+      --text: #f4f5fb;
+      --muted: #9299ad;
+      --accent: #a18aff;
+      --accent-2: #6f83ff;
+      --mint: #69e2c0;
+      --danger: #ff7f91;
+      --warning: #ffc77b;
+      --radius: 18px;
+      --shadow: 0 18px 55px rgba(0,0,0,.2);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(ellipse at 80% -20%, rgba(111,131,255,.10), transparent 42%),
+        var(--bg);
+      color: var(--text);
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 14px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button, input, textarea, select { font: inherit; }
+    button { cursor: pointer; }
+    button:focus-visible, input:focus-visible, textarea:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+    }
+
+    button:disabled { opacity: .5; cursor: not-allowed; }
+
+    .app {
+      display: grid;
+      grid-template-columns: 248px minmax(0, 1fr);
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      padding: 25px 16px 18px;
+      background: rgba(14,16,25,.94);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+      overflow-y: auto;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 8px;
+    }
+
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      flex-shrink: 0;
+      display: grid;
+      place-items: center;
+      border-radius: 14px;
+      color: white;
+      font-size: 22px;
+      font-weight: 900;
+      background: linear-gradient(140deg, #b19bff, #717dff 60%, #63dfd0);
+      box-shadow: 0 5px 24px rgba(133,118,255,.24);
+    }
+
+    .brand-name {
+      font-size: 19px;
+      font-weight: 850;
+      letter-spacing: 2.2px;
+    }
+
+    .brand-caption {
+      margin-top: 5px;
+      font-size: 9px;
+      color: var(--muted);
+      letter-spacing: 1.1px;
+      white-space: nowrap;
+    }
+
+    .nav-section-title {
+      padding: 0 12px;
+      margin-bottom: 10px;
+      color: #777f95;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+    }
+
+    .nav-list {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      padding: 12px;
+      border: 1px solid transparent;
+      border-radius: 12px;
+      background: transparent;
+      color: #a7aec1;
+      text-align: left;
+      transition: .18s ease;
+    }
+
+    .nav-item:hover {
+      background: rgba(255,255,255,.035);
+      color: var(--text);
+    }
+
+    .nav-item.active {
+      color: #e6e0ff;
+      background: linear-gradient(100deg, rgba(151,129,255,.17), rgba(151,129,255,.035));
+      border-color: rgba(161,138,255,.18);
+    }
+
+    .nav-icon {
+      width: 23px;
+      flex-shrink: 0;
+      font-size: 17px;
+      text-align: center;
+    }
+
+    .nav-label { font-size: 12px; font-weight: 550; }
+
+    .sidebar-bottom { margin-top: auto; }
+
+    .workspace-card {
+      padding: 16px;
+      border: 1px solid rgba(161,138,255,.2);
+      border-radius: 15px;
+      background: linear-gradient(145deg, rgba(137,117,255,.12), rgba(88,210,203,.045));
+    }
+
+    .workspace-card strong { font-size: 12px; }
+
+    .workspace-card p {
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.8;
+      margin: 9px 0 14px;
+    }
+
+    .main { min-width: 0; }
+
+    .topbar {
+      min-height: 76px;
+      padding: 15px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(11,13,20,.75);
+    }
+
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .breadcrumb span:last-child { color: var(--text); }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
+
+    .icon-button, .language-button {
+      min-height: 37px;
+      padding: 8px 12px;
+      color: var(--text);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 11px;
+    }
+
+    .language-button { font-size: 11px; }
+
+    .avatar {
+      width: 37px;
+      height: 37px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #a18aff, #637dff);
+      font-weight: 800;
+    }
+
+    .content {
+      width: 100%;
+      max-width: 1500px;
+      padding: 32px;
+      margin: 0 auto;
+    }
+
+    .page { display: none; animation: appear .2s ease; }
+    .page.active { display: block; }
+
+    @keyframes appear {
+      from { opacity: .45; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 24px;
+      margin-bottom: 28px;
+    }
+
+    .eyebrow {
+      margin-bottom: 12px;
+      color: var(--mint);
+      font-size: 10px;
+      font-weight: 750;
+      letter-spacing: 2px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(27px, 3vw, 37px);
+      font-weight: 760;
+      letter-spacing: -1.1px;
+      line-height: 1.25;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 680;
+    }
+
+    h3 { margin: 0; font-size: 13px; }
+
+    .description {
+      max-width: 640px;
+      margin: 12px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.9;
+    }
+
+    .button {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      min-height: 42px;
+      padding: 11px 16px;
+      border: 1px solid transparent;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 700;
+      transition: filter .2s, transform .2s;
+    }
+
+    .button:hover { filter: brightness(1.1); }
+    .button:active { transform: scale(.98); }
+
+    .button-primary {
+      color: white;
+      background: linear-gradient(110deg, #927bff, #7186ff);
+      box-shadow: 0 6px 22px rgba(123,111,255,.18);
+    }
+
+    .button-secondary {
+      color: var(--text);
+      background: var(--surface-2);
+      border-color: var(--border);
+    }
+
+    .button-danger {
+      color: var(--danger);
+      background: rgba(255,127,145,.07);
+      border-color: rgba(255,127,145,.18);
+    }
+
+    .button-small { min-height: 32px; padding: 7px 10px; font-size: 11px; }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0,1fr));
+      gap: 14px;
+      margin-bottom: 21px;
+    }
+
+    .card {
+      min-width: 0;
+      padding: 21px;
+      background: linear-gradient(145deg, rgba(23,27,40,.96), rgba(17,20,30,.96));
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: 0 8px 30px rgba(0,0,0,.06);
+    }
+
+    .stat-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .stat-label { color: var(--muted); font-size: 11px; }
+
+    .stat-symbol {
+      width: 35px;
+      height: 35px;
+      display: grid;
+      place-items: center;
+      border-radius: 11px;
+      background: rgba(161,138,255,.11);
+      color: #c4b7ff;
+      font-size: 16px;
+    }
+
+    .stat-number {
+      margin: 17px 0 8px;
+      font-size: 30px;
+      font-weight: 760;
+      letter-spacing: -.7px;
+    }
+
+    .stat-foot { color: var(--muted); font-size: 10px; line-height: 1.7; }
+    .mint { color: var(--mint); }
+    .purple { color: #b9aaff; }
+    .orange { color: var(--warning); }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: minmax(0,1.3fr) minmax(270px,1fr);
+      gap: 19px;
+    }
+
+    .card-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 19px;
+    }
+
+    .muted { color: var(--muted); }
+    .tiny { font-size: 10px; }
+
+    .task-list { display: flex; flex-direction: column; gap: 9px; }
+
+    .task-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 11px;
+      padding: 13px 11px;
+      background: rgba(255,255,255,.018);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+
+    .task-checkbox {
+      width: 17px;
+      height: 17px;
+      margin-top: 2px;
+      flex-shrink: 0;
+      accent-color: var(--accent);
+    }
+
+    .task-content { flex: 1; min-width: 0; }
+
+    .task-title {
+      overflow-wrap: anywhere;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .task-details {
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 10px;
+      line-height: 1.7;
+      overflow-wrap: anywhere;
+    }
+
+    .task-row.completed .task-title {
+      color: var(--muted);
+      text-decoration: line-through;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 5px 8px;
+      border-radius: 7px;
+      background: rgba(161,138,255,.11);
+      color: #c6baff;
+      font-size: 9px;
+      white-space: nowrap;
+    }
+
+    .badge.done {
+      color: var(--mint);
+      background: rgba(105,226,192,.09);
+    }
+
+    .badge.priority {
+      color: var(--warning);
+      background: rgba(255,199,123,.09);
+    }
+
+    .progress-heading {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin: 21px 0 10px;
+      font-size: 10px;
+    }
+
+    .progress-track {
+      height: 6px;
+      overflow: hidden;
+      background: rgba(255,255,255,.07);
+      border-radius: 20px;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0;
+      background: linear-gradient(90deg, var(--accent), var(--mint));
+      border-radius: inherit;
+      transition: width .25s;
+    }
+
+    .module-list { display: flex; flex-direction: column; gap: 10px; }
+
+    .module {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 13px 12px;
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      background: rgba(255,255,255,.018);
+      cursor: pointer;
+      transition: .2s;
+    }
+
+    .module:hover {
+      background: rgba(161,138,255,.06);
+      border-color: rgba(161,138,255,.25);
+    }
+
+    .module-icon {
+      width: 39px;
+      height: 39px;
+      flex-shrink: 0;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      color: #c4b7ff;
+      background: rgba(161,138,255,.1);
+      font-size: 17px;
+    }
+
+    .module-copy { flex: 1; min-width: 0; }
+    .module-copy strong { font-size: 12px; }
+    .module-copy p {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 10px;
+      line-height: 1.7;
+    }
+
+    .module-arrow { color: var(--muted); font-size: 14px; }
+
+    .section-gap { margin-top: 20px; }
+
+    .panel-grid {
+      display: grid;
+      grid-template-columns: repeat(2,minmax(0,1fr));
+      gap: 18px;
+    }
+
+    .form-label {
+      display: block;
+      margin: 14px 0 8px;
+      color: #c4cad8;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .field {
+      width: 100%;
+      min-height: 43px;
+      padding: 12px 13px;
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      background: #0d1019;
+      color: var(--text);
+      font-size: 12px;
+    }
+
+    .field::placeholder { color: #626b80; }
+
+    textarea.field { min-height: 115px; resize: vertical; line-height: 1.8; }
+
+    .field:focus {
+      outline: none;
+      border-color: rgba(161,138,255,.7);
+    }
+
+    .form-actions { display: flex; gap: 9px; margin-top: 14px; flex-wrap: wrap; }
+
+    .result-box {
+      min-height: 140px;
+      margin-top: 15px;
+      padding: 15px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: rgba(255,255,255,.02);
+      color: #d8dbea;
+      font-size: 12px;
+      line-height: 1.9;
+      overflow-wrap: anywhere;
+      white-space: pre-wrap;
+    }
+
+    .result-box:empty::before {
+      content: attr(data-placeholder);
+      color: var(--muted);
+    }
+
+    .feature-list { display: flex; flex-direction: column; gap: 10px; }
+
+    .feature-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 11px;
+      padding: 12px;
+      background: rgba(255,255,255,.02);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+
+    .feature-check { color: var(--mint); font-size: 15px; }
+    .feature-row strong { font-size: 12px; }
+    .feature-row p { margin: 5px 0 0; color: var(--muted); font-size: 10px; line-height: 1.8; }
+
+    .empty-state {
+      padding: 25px 12px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.9;
+    }
+
+    .table-wrap { overflow-x: auto; }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11px;
+      text-align: left;
+    }
+
+    .data-table th {
+      padding: 12px;
+      color: var(--muted);
+      font-weight: 600;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    .data-table td {
+      padding: 13px 12px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+
+    .footer {
+      padding: 25px 10px 8px;
+      color: #737c92;
+      font-size: 10px;
+      line-height: 1.9;
+      text-align: center;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      background: rgba(4,5,10,.78);
+      backdrop-filter: blur(7px);
+    }
+
+    .modal-backdrop.open { display: flex; }
+
+    .modal {
+      width: 100%;
+      max-width: 470px;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 23px;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      background: #151926;
+      box-shadow: var(--shadow);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .modal-header h2 { font-size: 19px; }
+    .modal-description { margin: 0 0 17px; color: var(--muted); font-size: 11px; line-height: 1.8; }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 9px;
+      margin-top: 18px;
+    }
+
+    .toast {
+      position: fixed;
+      z-index: 200;
+      bottom: 22px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: none;
+      width: max-content;
+      max-width: calc(100% - 28px);
+      padding: 13px 17px;
+      color: var(--text);
+      background: #22283a;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      font-size: 11px;
+      line-height: 1.7;
+      text-align: center;
+    }
+
+    .toast.visible { display: block; animation: appear .2s ease; }
+
+    .rtl { direction: rtl; }
+    body.rtl .app { grid-template-columns: minmax(0,1fr) 248px; }
+    body.rtl .sidebar {
+      grid-column: 2;
+      grid-row: 1;
+      border-right: 0;
+      border-left: 1px solid var(--border);
+    }
+    body.rtl .main { grid-column: 1; grid-row: 1; }
+    body.rtl .nav-item { text-align: right; }
+    body.rtl .nav-section-title { text-align: right; }
+    body.rtl .data-table { text-align: right; }
+
+    @media (max-width: 1100px) {
+      .content { padding: 25px; }
+      .stats-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+      .dashboard-grid { grid-template-columns: minmax(0,1fr); }
+    }
+
+    @media (max-width: 760px) {
+      .app, body.rtl .app { display: block; }
+      .sidebar {
+        position: relative;
+        height: auto;
+        padding: 14px 12px 10px;
+        gap: 14px;
+        border-right: 0;
+        border-bottom: 1px solid var(--border);
+      }
+      body.rtl .sidebar {
+        border-left: 0;
+        border-bottom: 1px solid var(--border);
+      }
+      .brand { padding: 0 4px; }
+      .brand-mark { width: 36px; height: 36px; border-radius: 12px; }
+      .brand-name { font-size: 17px; }
+      .brand-caption { font-size: 8px; }
+      .nav-section-title, .sidebar-bottom { display: none; }
+      .nav-list {
+        flex-direction: row;
+        gap: 5px;
+        overflow-x: auto;
+        padding-bottom: 2px;
+        scrollbar-width: thin;
+      }
+      .nav-item {
+        flex: 0 0 auto;
+        width: auto;
+        padding: 10px 12px;
+        gap: 7px;
+      }
+      .nav-icon { width: auto; font-size: 14px; }
+      .nav-label { font-size: 10px; }
+      .topbar { min-height: 59px; padding: 11px 14px; }
+      .content { padding: 23px 14px; }
+      .hero { align-items: flex-start; flex-direction: column; gap: 16px; }
+      .hero .button { width: 100%; }
+      .panel-grid { grid-template-columns: minmax(0,1fr); }
+      .card { padding: 16px; }
+      .stat-number { font-size: 26px; }
+      .top-actions { gap: 6px; }
+      .breadcrumb { font-size: 10px; gap: 6px; }
+      .icon-button, .language-button { min-height: 35px; padding: 8px 10px; }
+      .avatar { width: 34px; height: 34px; }
+    }
+
+    @media (max-width: 380px) {
+      .stats-grid { gap: 9px; }
+      .card { padding: 13px; }
+      .stat-label { font-size: 10px; }
+      .stat-number { font-size: 23px; }
+      .nav-item { padding: 9px 10px; }
+      .nav-icon { display: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        animation-duration: .01ms !important;
+        transition-duration: .01ms !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+<div class="app">
+
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">V</div>
+      <div>
+        <div class="brand-name">VELNORA</div>
+        <div class="brand-caption" data-i18n="brandCaption">INTELLIGENCE · EXECUTION · GROWTH</div>
+      </div>
+    </div>
+
+    <div>
+      <div class="nav-section-title" data-i18n="workspace">WORKSPACE</div>
+      <nav class="nav-list" aria-label="Main navigation">
+        <button class="nav-item active" data-page="dashboard">
+          <span class="nav-icon">◈</span><span class="nav-label" data-i18n="dashboard">Dashboard</span>
+        </button>
+        <button class="nav-item" data-page="intelligence">
+          <span class="nav-icon">✧</span><span class="nav-label" data-i18n="intelligence">Intelligence</span>
+        </button>
+        <button class="nav-item" data-page="workforce">
+          <span class="nav-icon">◫</span><span class="nav-label" data-i18n="workforce">Workforce</span>
+        </button>
+        <button class="nav-item" data-page="growth">
+          <span class="nav-icon">↗</span><span class="nav-label" data-i18n="growth">Growth</span>
+        </button>
+        <button class="nav-item" data-page="studio">
+          <span class="nav-icon">✎</span><span class="nav-label" data-i18n="studio">Studio</span>
+        </button>
+        <button class="nav-item" data-page="control">
+          <span class="nav-icon">◎</span><span class="nav-label" data-i18n="control">Control Center</span>
+        </button>
+      </nav>
+    </div>
+
+    <div class="sidebar-bottom">
+      <div class="nav-section-title" data-i18n="account">ACCOUNT</div>
+      <div class="nav-list">
+        <button class="nav-item" id="settingsButton">
+          <span class="nav-icon">⚙</span><span class="nav-label" data-i18n="settings">Settings</span>
+        </button>
+      </div>
+
+      <div class="workspace-card">
+        <strong data-i18n="workspaceCardTitle">Make progress meaningful.</strong>
+        <p data-i18n="workspaceCardText">Turn your next big idea into small, manageable steps.</p>
+        <button class="button button-primary" id="createPlanButton" style="width:100%" data-i18n="createPlan">
+          Create a plan ↗
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div class="breadcrumb">
+        <span>VELNORA</span><span>/</span><span id="breadcrumbCurrent">Dashboard</span>
+      </div>
+
+      <div class="top-actions">
+        <button class="language-button" id="languageButton" aria-label="Switch language">عربي</button>
+        <button class="icon-button" id="helpButton" aria-label="Help">?</button>
+        <div class="avatar" aria-label="VELNORA workspace">V</div>
+      </div>
+    </header>
+
+    <div class="content">
+
+      <!-- DASHBOARD -->
+      <section class="page active" id="page-dashboard">
+        <div class="hero">
+          <div>
+            <div class="eyebrow" data-i18n="dashboardEyebrow">YOUR INTELLIGENT WORKSPACE</div>
+            <h1 data-i18n="welcomeTitle">Turn ambition into execution.</h1>
+            <p class="description" data-i18n="welcomeDescription">
+              A focused workspace to clarify goals, organize work, and track meaningful progress.
+            </p>
+          </div>
+          <button class="button button-primary" id="newTaskButton" data-i18n="newTask">＋ New task</button>
+        </div>
+
+        <div class="stats-grid">
+          <div class="card">
+            <div class="stat-heading">
+              <span class="stat-label" data-i18n="totalTasks">Total tasks</span>
+              <span class="stat-symbol">◫</span>
+            </div>
+            <div class="stat-number" id="totalTasks">00</div>
+            <div class="stat-foot" data-i18n="tasksAcross">Tasks in your workspace</div>
+          </div>
+
+          <div class="card">
+            <div class="stat-heading">
+              <span class="stat-label" data-i18n="completedTasks">Completed</span>
+              <span class="stat-symbol">✓</span>
+            </div>
+            <div class="stat-number" id="completedTasks">00</div>
+            <div class="stat-foot"><span class="mint" id="completionPercent">0%</span> <span data-i18n="ofAllTasks">of all tasks</span></div>
+          </div>
+
+          <div class="card">
+            <div class="stat-heading">
+              <span class="stat-label" data-i18n="activeTasks">In progress</span>
+              <span class="stat-symbol">↗</span>
+            </div>
+            <div class="stat-number" id="activeTasks">00</div>
+            <div class="stat-foot" data-i18n="keepMoving">Keep moving forward</div>
+          </div>
+
+          <div class="card">
+            <div class="stat-heading">
+              <span class="stat-label" data-i18n="goalProgress">Goal progress</span>
+              <span class="stat-symbol">✧</span>
+            </div>
+            <div class="stat-number" id="goalProgress">0%</div>
+            <div class="stat-foot" data-i18n="basedOnTasks">Based on completed tasks</div>
+          </div>
+        </div>
+
+        <div class="dashboard-grid">
+          <div class="card">
+            <div class="card-heading">
+              <h2 data-i18n="priorityTasks">Your tasks</h2>
+              <button class="button button-secondary button-small" id="viewAllTasks" data-i18n="viewAll">View all</button>
+            </div>
+
+            <div class="task-list" id="dashboardTaskList"></div>
+
+            <div class="progress-heading">
+              <span data-i18n="overallProgress">Overall progress</span>
+              <span id="overallProgressText">0%</span>
+            </div>
+            <div class="progress-track"><div class="progress-bar" id="overallProgressBar"></div></div>
+          </div>
+
+          <div class="card">
+            <div class="card-heading">
+              <h2 data-i18n="platformModules">Platform modules</h2>
+              <span class="tiny muted" data-i18n="yourToolkit">YOUR TOOLKIT</span>
+            </div>
+
+            <div class="module-list">
+              <div class="module" data-open-page="intelligence" tabindex="0" role="button">
+                <div class="module-icon">✧</div>
+                <div class="module-copy">
+                  <strong data-i18n="intelligence">Intelligence</strong>
+                  <p data-i18n="intelligenceDescription">Turn goals into actionable steps.</p>
+                </div>
+                <span class="module-arrow">↗</span>
+              </div>
+
+              <div class="module" data-open-page="workforce" tabindex="0" role="button">
+                <div class="module-icon">◫</div>
+                <div class="module-copy">
+                  <strong data-i18n="workforce">Workforce</strong>
+                  <p data-i18n="workforceDescription">Manage tasks and daily execution.</p>
+                </div>
+                <span class="module-arrow">↗</span>
+              </div>
+
+              <div class="module" data-open-page="growth" tabindex="0" role="button">
+                <div class="module-icon">↗</div>
+                <div class="module-copy">
+                  <strong data-i18n="growth">Growth</strong>
+                  <p data-i18n="growthDescription">Organize customer opportunities.</p>
+                </div>
+                <span class="module-arrow">↗</span>
+              </div>
+
+              <div class="module" data-open-page="studio" tabindex="0" role="button">
+                <div class="module-icon">✎</div>
+                <div class="module-copy">
+                  <strong data-i18n="studio">Studio</strong>
+                  <p data-i18n="studioDescription">Create plans and business content.</p>
+                </div>
+                <span class="module-arrow">↗</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- INTELLIGENCE -->
+      <section class="page" id="page-intelligence">
+        <div class="hero">
+          <div>
+            <div class="eyebrow" data-i18n="intelligenceEyebrow">THINK CLEARER</div>
+            <h1 data-i18n="intelligenceTitle">From goal to action.</h1>
+            <p class="description" data-i18n="intelligenceIntro">
+              Describe an objective and turn it into a practical starting plan.
+            </p>
+          </div>
+        </div>
+
+        <div class="panel-grid">
+          <div class="card">
+            <h2 data-i18n="goalPlanner">Goal planner</h2>
+            <p class="description" data-i18n="goalPlannerDescription">Start with a specific result you want to achieve.</p>
+
+            <form id="goalForm">
+              <label class="form-label" for="goalInput" data-i18n="yourGoal">Your goal</label>
+              <textarea class="field" id="goalInput" maxlength="1200" required data-placeholder="goalPlaceholder" placeholder="What do you want to achieve?"></textarea>
+
+              <label class="form-label" for="goalPeriod" data-i18n="timeframe">Timeframe</label>
+              <select class="field" id="goalPeriod">
+                <option value="7" data-i18n="sevenDays">7 days</option>
+                <option value="30" selected data-i18n="thirtyDays">30 days</option>
+                <option value="90" data-i18n="ninetyDays">90 days</option>
+              </select>
+
+              <div class="form-actions">
+                <button class="button button-primary" type="submit" data-i18n="buildPlan">Build my plan ↗</button>
+                <button class="button button-secondary" type="reset" data-i18n="clear">Clear</button>
+              </div>
+            </form>
+
+            <div class="result-box" id="goalResult" aria-live="polite" data-placeholder="Your plan will appear here."></div>
+            <button class="button button-secondary button-small" id="addPlanTasks" style="margin-top:12px" hidden data-i18n="addPlanTasks">Add plan steps to tasks</button>
+          </div>
+
+          <div class="card">
+            <h2 data-i18n="planningPrinciples">Planning principles</h2>
+            <p class="description" data-i18n="planningPrinciplesDescription">A useful plan should make the next step clearer, not more complicated.</p>
+
+            <div class="feature-list section-gap">
+              <div class="feature-row">
+                <span class="feature-check">✓</span>
+                <div><strong data-i18n="principleOne">Define the outcome</strong><p data-i18n="principleOneText">Make the desired result specific enough to measure.</p></div>
+              </div>
+              <div class="feature-row">
+                <span class="feature-check">✓</span>
+                <div><strong data-i18n="principleTwo">Break it into steps</strong><p data-i18n="principleTwoText">Choose small actions that can be completed.</p></div>
+              </div>
+              <div class="feature-row">
+                <span class="feature-check">✓</span>
+                <div><strong data-i18n="principleThree">Review progress</strong><p data-i18n="principleThreeText">Use real progress to decide what to do next.</p></div>
+              </div>
+            </div>
+
+            <p class="description section-gap" data-i18n="plannerDisclaimer">
+              This initial planner uses local rules, not a connected AI model. AI integration will be added separately.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- WORKFORCE -->
+      <section class="page" id="page-workforce">
+        <div class="hero">
+          <div>
+            <div class="eyebrow" data-i18n="workforceEyebrow">MAKE PROGRESS VISIBLE</div>
+            <h1 data-i18n="workforceTitle">Your work, organized.</h1>
+            <p class="description" data-i18n="workforceIntro">Manage your tasks and track completed work in one place.</p>
+          </div>
+          <button class="button button-primary" id="workforceNewTask" data-i18n="newTask">＋ New task</button>
+        </div>
+
+        <div class="card">
+          <div class="card-heading">
+            <h2 data-i18n="allTasks">All tasks</h2>
+            <span class="tiny muted" id="workforceTaskCount">0 tasks</span>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th data-i18n="taskColumn">TASK</th>
+                  <th data-i18n="statusColumn">STATUS</th>
+                  <th data-i18n="actionColumn">ACTION</th>
+                </tr>
+              </thead>
+              <tbody id="workforceTableBody"></tbody>
+            </table>
+          </div>
+          <div class="empty-state" id="workforceEmpty" hidden data-i18n="noTasks">No tasks yet. Create your first task.</div>
+        </div>
+      </section>
+
+      <!-- GROWTH -->
+      <section class="page" id="page-growth">
+        <div class="hero">
+          <div>
+            <div class="eyebrow" data-i18n="growthEyebrow">BUILD WITH PURPOSE</div>
+            <h1 data-i18n="growthTitle">Understand your growth.</h1>
+            <p class="description" data-i18n="growthIntro">Start by defining who you serve, what they need, and how you can help.</p>
+          </div>
+        </div>
+
+        <div class="panel-grid">
+          <div class="card">
+            <h2 data-i18n="customerProfile">Customer opportunity brief</h2>
+            <form id="growthForm">
+              <label class="form-label" for="customerType" data-i18n="targetCustomer">Target customer</label>
+              <input class="field" id="customerType" maxlength="200" required placeholder="e.g. Small online businesses">
+
+              <label class="form-label" for="customerProblem" data-i18n="customerProblem">Customer problem</label>
+              <textarea class="field" id="customerProblem" maxlength="1000" required placeholder="What problem do they need to solve?"></textarea>
+
+              <label class="form-label" for="customerOffer" data-i18n="yourOffer">Your proposed solution</label>
+              <textarea class="field" id="customerOffer" maxlength="1000" required placeholder="How could you help them?"></textarea>
+
+              <div class="form-actions">
+                <button class="button button-primary" type="submit" data-i18n="createBrief">Create brief</button>
+                <button class="button button-secondary" type="reset" data-i18n="clear">Clear</button>
+              </div>
+            </form>
+            <div class="result-box" id="growthResult" aria-live="polite" data-placeholder="Your opportunity brief will appear here."></div>
+          </div>
+
+          <div class="card">
+            <h2 data-i18n="growthFramework">Growth framework</h2>
+            <p class="description" data-i18n="growthFrameworkDescription">A strong business starts with a real customer problem and a solution people value.</p>
+            <div class="feature-list section-gap">
+              <div class="feature-row"><span class="feature-check">01</span><div><strong data-i18n="growthStepOne">Identify a real need</strong><p data-i18n="growthStepOneText">Talk to potential customers and understand their difficulties.</p></div></div>
+              <div class="feature-row"><span class="feature-check">02</span><div><strong data-i18n="growthStepTwo">Validate the solution</strong><p data-i18n="growthStepTwoText">Test whether people find the proposed outcome valuable.</p></div></div>
+              <div class="feature-row"><span class="feature-check">03</span><div><strong data-i18n="growthStepThree">Measure results</strong><p data-i18n="growthStepThreeText">Track real interest, conversions, costs, and customer feedback.</p></div></div>
+            </div>
+            <p class="description section-gap" data-i18n="growthDisclaimer">This workspace is a planning tool. It does not yet connect to customer accounts or sales platforms.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- STUDIO -->
+      <section class="page" id="page-studio">
+        <div class="hero">
+          <div>
+            <div class="eyebrow" data-i18n="studioEyebrow">CREATE WITH CLARITY</div>
+            <h1 data-i18n="studioTitle">Your business studio.</h1>
+            <p class="description" data-i18n="studioIntro">Draft a clear business message using the information you provide.</p>
+          </div>
+        </div>
+
+        <div class="panel-grid">
+          <div class="card">
+            <h2 data-i18n="contentBuilder">Business content builder</h2>
+            <form id="studioForm">
+              <label class="form-label" for="contentType" data-i18n="contentType">Content type</label>
+              <select class="field" id="contentType">
+                <option value="proposal" data-i18n="proposalOption">Business proposal outline</option>
+                <option value="email" data-i18n="emailOption">Customer email draft</option>
+                <option value="marketing" data-i18n="marketingOption">Marketing message</option>
+                <option value="plan" data-i18n="planOption">Business plan outline</option>
+              </select>
+
+              <label class="form-label" for="contentAudience" data-i18n="contentAudience">Audience</label>
+              <input class="field" id="contentAudience" maxlength="200" required placeholder="Who is this for?">
+
+              <label class="form-label" for="contentGoal" data-i18n="contentGoal">Main objective and details</label>
+              <textarea class="field" id="contentGoal" maxlength="1500" required placeholder="Describe what you want to communicate."></textarea>
+
+              <div class="form-actions">
+                <button class="button button-primary" type="submit" data-i18n="generateDraft">Generate draft</button>
+                <button class="button button-secondary" type="reset" data-i18n="clear">Clear</button>
+              </div>
+            </form>
+            <div class="result-box" id="studioResult" aria-live="polite" data-placeholder="Your draft will appear here."></div>
+            <button class="button button-secondary button-small" id="copyDraftButton" style="margin-top:12px" hidden data-i18n="copyDraft">Copy draft</button>
+          </div>
+
+          <div class="card">
+            <h2 data-i18n="studioStandards">Our content standards</h2>
+            <div class="feature-list section-gap">
+              <div class="feature-row"><span class="feature-check">✓</span><div><strong data-i18n="studioStandardOne">Clear purpose</strong><p data-i18n="studioStandardOneText">Every message should have a defined audience and outcome.</p></div></div>
+              <div class="feature-row"><span class="feature-check">✓</span><div><strong data-i18n="studioStandardTwo">Professional structure</strong><p data-i18n="studioStandardTwoText">Use a logical flow, readable language, and a clear next step.</p></div></div>
+              <div class="feature-row"><span class="feature-check">✓</span><div><strong data-i18n="studioStandardThree">Honest claims</strong><p data-i18n="studioStandardThreeText">Never invent customer results, credentials, or promises.</p></div></div>
+            </div>
+            <p class="description section-gap" data-i18n="studioDisclaimer">The current generator creates a structured template from your inputs; it is not an AI writing service yet.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- CONTROL CENTER -->
+      <section class="page" id="page-control">
+        <div class="hero">
+          <div>
+            <div class="eyebrow" data-i18n="controlEyebrow">SEE THE WHOLE PICTURE</div>
+            <h1 data-i18n="controlTitle">Your control center.</h1>
+            <p class="description" data-i18n="controlIntro">Review your current workspace activity and understand what needs attention.</p>
+          </div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="card"><div class="stat-label" data-i18n="totalTasks">Total tasks</div><div class="stat-number" id="controlTotal">0</div><div class="stat-foot" data-i18n="allRecordedTasks">All recorded tasks</div></div>
+          <div class="card"><div class="stat-label" data-i18n="completedTasks">Completed</div><div class="stat-number mint" id="controlCompleted">0</div><div class="stat-foot" data-i18n="completedRecorded">Tasks marked as complete</div></div>
+          <div class="card"><div class="stat-label" data-i18n="activeTasks">In progress</div><div class="stat-number purple" id="controlActive">0</div><div class="stat-foot" data-i18n="stillToDo">Tasks still to do</div></div>
+          <div class="card"><div class="stat-label" data-i18n="completionRate">Completion rate</div><div class="stat-number" id="controlRate">0%</div><div class="stat-foot" data-i18n="currentWorkspaceOnly">Current browser workspace only</div></div>
+        </div>
+
+        <div class="card section-gap">
+          <div class="card-heading">
+            <h2 data-i18n="workspaceStatus">Workspace status</h2>
+            <span class="badge" data-i18n="prototypeStatus">Initial prototype</span>
+          </div>
+          <div class="feature-list">
+            <div class="feature-row"><span class="feature-check">✓</span><div><strong data-i18n="statusInterface">Responsive interface</strong><p data-i18n="statusInterfaceText">The interface adapts to mobile and desktop screens.</p></div></div>
+            <div class="feature-row"><span class="feature-check">✓</span><div><strong data-i18n="statusTasks">Local task management</strong><p data-i18n="statusTasksText">Tasks can be added, completed, deleted, and saved in this browser.</p></div></div>
+            <div class="feature-row"><span class="feature-check">!</span><div><strong data-i18n="statusAI">AI integration</strong><p data-i18n="statusAIText">Not connected yet. A secure server and an AI API integration are still required.</p></div></div>
+            <div class="feature-row"><span class="feature-check">!</span><div><strong data-i18n="statusAccounts">Secure user accounts</strong><p data-i18n="statusAccountsText">Not implemented. Do not use this prototype to store confidential customer data.</p></div></div>
+            <div class="feature-row"><span class="feature-check">!</span><div><strong data-i18n="statusPayments">Payments and subscriptions</strong><p data-i18n="statusPaymentsText">Not connected. No subscription or payment is processed by this page.</p></div></div>
+          </div>
+          <div class="form-actions">
+            <button class="button button-secondary" id="exportDataButton" data-i18n="exportData">Export tasks</button>
+            <button class="button button-danger" id="clearTasksButton" data-i18n="clearAllTasks">Delete all tasks</button>
+          </div>
+        </div>
+      </section>
+
+      <div class="footer" data-i18n="footer">
+        VELNORA · Built for clarity, execution, and sustainable growth.<br>
+        Prototype release. AI services, secure accounts, and cloud synchronization are not connected.
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- TASK MODAL -->
+<div class="modal-backdrop" id="taskModal">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="taskModalTitle">
+    <div class="modal-header">
+      <h2 id="taskModalTitle">Create a task</h2>
+      <button class="icon-button" type="button" id="closeTaskModal" aria-label="Close">✕</button>
+    </div>
+    <p class="modal-description" data-i18n="taskModalDescription">Add a clear action to your workspace.</p>
+
+    <form id="taskForm">
+      <label class="form-label" for="taskTitleInput" data-i18n="taskName">Task name</label>
+      <input class="field" id="taskTitleInput" maxlength="160" required placeholder="What needs to be done?">
+
+      <label class="form-label" for="taskDetailsInput" data-i18n="taskDetails">Details (optional)</label>
+      <textarea class="field" id="taskDetailsInput" maxlength="800" placeholder="Add a few details"></textarea>
+
+      <div class="modal-actions">
+        <button class="button button-secondary" type="button" id="cancelTaskButton" data-i18n="cancel">Cancel</button>
+        <button class="button button-primary" type="submit" data-i18n="saveTask">Save task</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+  "use strict";
+
+  const STORAGE_KEY = "velnora_workspace_v1";
+  const LANGUAGE_KEY = "velnora_language_v1";
+
+  const translations = {
+    en: {
+      brandCaption:"INTELLIGENCE · EXECUTION · GROWTH",
+      workspace:"WORKSPACE", dashboard:"Dashboard", intelligence:"Intelligence",
+      workforce:"Workforce", growth:"Growth", studio:"Studio",
+      control:"Control Center", account:"ACCOUNT", settings:"Settings",
+      workspaceCardTitle:"Make progress meaningful.",
+      workspaceCardText:"Turn your next big idea into small, manageable steps.",
+      createPlan:"Create a plan ↗", dashboardEyebrow:"YOUR INTELLIGENT WORKSPACE",
+      welcomeTitle:"Turn ambition into execution.",
+      welcomeDescription:"A focused workspace to clarify goals, organize work, and track meaningful progress.",
+      newTask:"＋ New task", totalTasks:"Total tasks", tasksAcross:"Tasks in your workspace",
+      completedTasks:"Completed", ofAllTasks:"of all tasks", activeTasks:"In progress",
+      keepMoving:"Keep moving forward", goalProgress:"Goal progress",
+      basedOnTasks:"Based on completed tasks", priorityTasks:"Your tasks",
+      viewAll:"View all", overallProgress:"Overall progress",
+      platformModules:"Platform modules", yourToolkit:"YOUR TOOLKIT",
+      intelligenceDescription:"Turn goals into actionable steps.",
+      workforceDescription:"Manage tasks and daily execution.",
+      growthDescription:"Organize customer opportunities.",
+      studioDescription:"Create plans and business content.",
+      intelligenceEyebrow:"THINK CLEARER", intelligenceTitle:"From goal to action.",
+      intelligenceIntro:"Describe an objective and turn it into a practical starting plan.",
+      goalPlanner:"Goal planner", goalPlannerDescription:"Start with a specific result you want to achieve.",
+      yourGoal:"Your goal", goalPlaceholder:"What do you want to achieve?",
+      timeframe:"Timeframe", sevenDays:"7 days", thirtyDays:"30 days", ninetyDays:"90 days",
+      buildPlan:"Build my plan ↗", clear:"Clear",
+      planningPrinciples:"Planning principles",
+      planningPrinciplesDescription:"A useful plan should make the next step clearer, not more complicated.",
+      principleOne:"Define the outcome", principleOneText:"Make the desired result specific enough to measure.",
+      principleTwo:"Break it into steps", principleTwoText:"Choose small actions that can be completed.",
+      principleThree:"Review progress", principleThreeText:"Use real progress to decide what to do next.",
+      plannerDisclaimer:"This initial planner uses local rules, not a connected AI model. AI integration will be added separately.",
+      addPlanTasks:"Add plan steps to tasks",
+      workforceEyebrow:"MAKE PROGRESS VISIBLE", workforceTitle:"Your work, organized.",
+      workforceIntro:"Manage your tasks and track completed work in one place.",
+      allTasks:"All tasks", taskColumn:"TASK", statusColumn:"STATUS", actionColumn:"ACTION",
+      noTasks:"No tasks yet. Create your first task.", done:"Completed", pending:"In progress",
+      markComplete:"Complete", markPending:"Reopen", delete:"Delete", tasksCount:"tasks",
+      growthEyebrow:"BUILD WITH PURPOSE", growthTitle:"Understand your growth.",
+      growthIntro:"Start by defining who you serve, what they need, and how you can help.",
+      customerProfile:"Customer opportunity brief", targetCustomer:"Target customer",
+      customerProblem:"Customer problem", yourOffer:"Your proposed solution",
+      createBrief:"Create brief", growthFramework:"Growth framework",
+      growthFrameworkDescription:"A strong business starts with a real customer problem and a solution people value.",
+      growthStepOne:"Identify a real need",
+      growthStepOneText:"Talk to potential customers and understand their difficulties.",
+      growthStepTwo:"Validate the solution",
+      growthStepTwoText:"Test whether people find the proposed outcome valuable.",
+      growthStepThree:"Measure results",
+      growthStepThreeText:"Track real interest, conversions, costs, and customer feedback.",
+      growthDisclaimer:"This workspace is a planning tool. It does not yet connect to customer accounts or sales platforms.",
+      studioEyebrow:"CREATE WITH CLARITY", studioTitle:"Your business studio.",
+      studioIntro:"Draft a clear business message using the information you provide.",
+      contentBuilder:"Business content builder", contentType:"Content type",
+      proposalOption:"Business proposal outline", emailOption:"Customer email draft",
+      marketingOption:"Marketing message", planOption:"Business plan outline",
+      contentAudience:"Audience", contentGoal:"Main objective and details",
+      generateDraft:"Generate draft", studioStandards:"Our content standards",
+      studioStandardOne:"Clear purpose",
+      studioStandardOneText:"Every message should have a defined audience and outcome.",
+      studioStandardTwo:"Professional structure",
+      studioStandardTwoText:"Use a logical flow, readable language, and a clear next step.",
+      studioStandardThree:"Honest claims",
+      studioStandardThreeText:"Never invent customer results, credentials, or promises.",
+      studioDisclaimer:"The current generator creates a structured template from your inputs; it is not an AI writing service yet.",
+      copyDraft:"Copy draft", controlEyebrow:"SEE THE WHOLE PICTURE",
+      controlTitle:"Your control center.",
+      controlIntro:"Review your current workspace activity and understand what needs attention.",
+      allRecordedTasks:"All recorded tasks", completedRecorded:"Tasks marked as complete",
+      stillToDo:"Tasks still to do", completionRate:"Completion rate",
+      currentWorkspaceOnly:"Current browser workspace only", workspaceStatus:"Workspace status",
+      prototypeStatus:"Initial prototype", statusInterface:"Responsive interface",
+      statusInterfaceText:"The interface adapts to mobile and desktop screens.",
+      statusTasks:"Local task management",
+      statusTasksText:"Tasks can be added, completed, deleted, and saved in this browser.",
+      statusAI:"AI integration",
+      statusAIText:"Not connected yet. A secure server and an AI API integration are still required.",
+      statusAccounts:"Secure user accounts",
+      statusAccountsText:"Not implemented. Do not use this prototype to store confidential customer data.",
+      statusPayments:"Payments and subscriptions",
+      statusPaymentsText:"Not connected. No subscription or payment is processed by this page.",
+      exportData:"Export tasks", clearAllTasks:"Delete all tasks",
+      footer:"VELNORA · Built for clarity, execution, and sustainable growth.<br>Prototype release. AI services, secure accounts, and cloud synchronization are not connected.",
+      taskModalDescription:"Add a clear action to your workspace.",
+      taskName:"Task name", taskDetails:"Details (optional)", cancel:"Cancel", saveTask:"Save task",
+      emptyResult:"No tasks yet. Add a task to begin.",
+      taskAdded:"Task added successfully.", taskUpdated:"Task status updated.",
+      taskDeleted:"Task deleted.", tasksDeleted:"All tasks deleted.",
+      enterTask:"Please enter a task name.", enterGoal:"Please describe your goal first.",
+      planReady:"Your starter plan is ready. Review the steps and adjust them to your situation.",
+      planTitle:"STARTER ACTION PLAN",
+      dayLabel:"Day", phaseLabel:"Focus",
+      planStep1:"Define the exact outcome and how you will measure success.",
+      planStep2:"Identify the people, tools, and information you need.",
+      planStep3:"Choose the smallest useful action and complete it.",
+      planStep4:"Review what worked, what did not, and what needs to change.",
+      planStep5:"Use the results to set the next priority.",
+      briefReady:"Your opportunity brief has been prepared.",
+      customerLabel:"TARGET CUSTOMER", problemLabel:"CUSTOMER PROBLEM",
+      solutionLabel:"PROPOSED SOLUTION", nextActions:"SUGGESTED NEXT ACTIONS",
+      nextAction1:"Interview potential customers to verify the problem.",
+      nextAction2:"Describe the expected benefit in plain language.",
+      nextAction3:"Test a small version before investing heavily.",
+      selectAudience:"Please describe your target audience.",
+      selectGoal:"Please enter the main objective.",
+      draftReady:"Your structured draft is ready. Review all details before using it.",
+      proposalHeading:"BUSINESS PROPOSAL OUTLINE",
+      emailHeading:"CUSTOMER EMAIL DRAFT",
+      marketingHeading:"MARKETING MESSAGE DRAFT",
+      businessPlanHeading:"BUSINESS PLAN OUTLINE",
+      audienceLabel:"AUDIENCE", objectiveLabel:"OBJECTIVE / BRIEF",
+      openingLabel:"OPENING", valueLabel:"VALUE PROPOSITION",
+      nextStepLabel:"PROPOSED NEXT STEP", reviewLabel:"REVIEW BEFORE SENDING",
+      copySuccess:"Draft copied.", copyFailed:"Could not copy automatically. Select and copy the text manually.",
+      exportSuccess:"Task file exported.", exportFailed:"Could not export tasks.",
+      clearConfirm:"Delete every task in this browser? This cannot be undone.",
+      helpMessage:"VELNORA is an early prototype. The task manager and planning templates work locally. AI, secure accounts, cloud sync, and payments are not connected yet.",
+      settingsMessage:"This prototype currently stores workspace data in this browser only. Secure user accounts and account settings have not been implemented.",
+      languageChanged:"Language updated.",
+      taskCountOne:"task", taskCountMany:"tasks",
+      genericError:"Something went wrong. Please try again.",
+      draftOpening:"Hello,",
+      draftClosing:"Best regards,",
+      businessObjective:"Explain the business objective and the value this proposal is intended to deliver.",
+      emailObjective:"Communicate clearly, explain the reason for contacting the customer, and suggest one next step.",
+      marketingObjective:"Present the audience's problem, the proposed benefit, and a clear call to action.",
+      planObjective:"Summarize the customer, problem, proposed solution, validation approach, and main risks."
+    },
+    ar: {
+      brandCaption:"الذكاء · التنفيذ · النمو",
+      workspace:"مساحة العمل", dashboard:"لوحة التحكم", intelligence:"الذكاء",
+      workforce:"تنظيم العمل", growth:"النمو", studio:"الاستوديو",
+      control:"مركز التحكم", account:"الحساب", settings:"الإعدادات",
+      workspaceCardTitle:"اجعل تقدمك ذا معنى.",
+      workspaceCardText:"حوّل فكرتك الكبيرة إلى خطوات صغيرة قابلة للتنفيذ.",
+      createPlan:"أنشئ خطة ↗", dashboardEyebrow:"مساحة عملك الذكية",
+      welcomeTitle:"حوّل طموحك إلى إنجاز.",
+      welcomeDescription:"مساحة منظّمة لتوضيح الأهداف وإدارة العمل ومتابعة التقدم الحقيقي.",
+      newTask:"＋ مهمة جديدة", totalTasks:"إجمالي المهام",
+      tasksAcross:"المهام في مساحة عملك", completedTasks:"المهام المكتملة",
+      ofAllTasks:"من إجمالي المهام", activeTasks:"قيد التنفيذ",
+      keepMoving:"تابع التقدم نحو أهدافك", goalProgress:"تقدم الأهداف",
+      basedOnTasks:"بناءً على المهام المكتملة", priorityTasks:"مهامك",
+      viewAll:"عرض الكل", overallProgress:"التقدم الإجمالي",
+      platformModules:"أقسام المنصة", yourToolkit:"أدواتك",
+      intelligenceDescription:"حوّل الأهداف إلى خطوات قابلة للتنفيذ.",
+      workforceDescription:"نظّم المهام وتابع تنفيذها.",
+      growthDescription:"نظّم فرص العملاء المحتملة.",
+      studioDescription:"أنشئ الخطط ومحتوى الأعمال.",
+      intelligenceEyebrow:"فكّر بوضوح أكبر", intelligenceTitle:"من الهدف إلى التنفيذ.",
+      intelligenceIntro:"اشرح هدفك وحوّله إلى خطة أولية عملية.",
+      goalPlanner:"مخطط الأهداف", goalPlannerDescription:"ابدأ بنتيجة محددة تريد تحقيقها.",
+      yourGoal:"هدفك", goalPlaceholder:"ما الذي تريد تحقيقه؟",
+      timeframe:"المدة الزمنية", sevenDays:"7 أيام", thirtyDays:"30 يوماً",
+      ninetyDays:"90 يوماً", buildPlan:"أنشئ خطتي ↗", clear:"مسح",
+      planningPrinciples:"مبادئ التخطيط",
+      planningPrinciplesDescription:"الخطة المفيدة توضّح الخطوة التالية ولا تزيد الأمور تعقيداً.",
+      principleOne:"حدّد النتيجة", principleOneText:"اجعل النتيجة المطلوبة واضحة وقابلة للقياس.",
+      principleTwo:"قسّم الهدف إلى خطوات", principleTwoText:"اختر إجراءات صغيرة يمكن إنجازها.",
+      principleThree:"راجع تقدمك", principleThreeText:"استخدم النتائج الفعلية لتحديد الخطوة التالية.",
+      plannerDisclaimer:"يستخدم المخطط الحالي قواعد محلية، وليس نموذج ذكاء اصطناعي متصلاً. سنضيف ربط الذكاء الاصطناعي لاحقاً.",
+      addPlanTasks:"أضف خطوات الخطة إلى المهام",
+      workforceEyebrow:"اجعل تقدمك واضحاً", workforceTitle:"عملك، منظّم.",
+      workforceIntro:"أدر مهامك وتابع الأعمال المكتملة في مكان واحد.",
+      allTasks:"جميع المهام", taskColumn:"المهمة", statusColumn:"الحالة",
+      actionColumn:"الإجراء", noTasks:"لا توجد مهام بعد. أنشئ مهمتك الأولى.",
+      done:"مكتملة", pending:"قيد التنفيذ", markComplete:"إكمال",
+      markPending:"إعادة فتح", delete:"حذف", tasksCount:"مهمة",
+      growthEyebrow:"ابنِ بهدف واضح", growthTitle:"افهم فرص نموك.",
+      growthIntro:"ابدأ بتحديد من تخدم، وما الذي يحتاجه، وكيف يمكنك مساعدته.",
+      customerProfile:"ملخص فرصة تجارية", targetCustomer:"العميل المستهدف",
+      customerProblem:"مشكلة العميل", yourOffer:"الحل المقترح",
+      createBrief:"إنشاء الملخص", growthFramework:"إطار النمو",
+      growthFrameworkDescription:"يبدأ العمل الناجح بمشكلة حقيقية وحل يقدّره العملاء.",
+      growthStepOne:"حدّد حاجة حقيقية",
+      growthStepOneText:"تواصل مع عملاء محتملين وافهم الصعوبات التي يواجهونها.",
+      growthStepTwo:"اختبر الحل",
+      growthStepTwoText:"تحقق مما إذا كان العملاء يجدون قيمة في النتيجة المقترحة.",
+      growthStepThree:"قِس النتائج",
+      growthStepThreeText:"تابع الاهتمام والتحويلات والتكاليف وملاحظات العملاء.",
+      growthDisclaimer:"هذه مساحة للتخطيط فقط، ولا تتصل حالياً بحسابات العملاء أو منصات المبيعات.",
+      studioEyebrow:"أنشئ بوضوح", studioTitle:"استوديو أعمالك.",
+      studioIntro:"أنشئ مسودة رسالة تجارية واضحة اعتماداً على المعلومات التي تقدمها.",
+      contentBuilder:"منشئ محتوى الأعمال", contentType:"نوع المحتوى",
+      proposalOption:"مخطط عرض تجاري", emailOption:"مسودة بريد للعميل",
+      marketingOption:"رسالة تسويقية", planOption:"مخطط خطة عمل",
+      contentAudience:"الجمهور المستهدف", contentGoal:"الهدف والتفاصيل",
+      generateDraft:"إنشاء مسودة", studioStandards:"معايير المحتوى",
+      studioStandardOne:"هدف واضح",
+      studioStandardOneText:"يجب تحديد الجمهور والنتيجة المطلوبة من كل رسالة.",
+      studioStandardTwo:"تنظيم احترافي",
+      studioStandardTwoText:"استخدم تسلسلاً منطقياً ولغة واضحة وخطوة تالية محددة.",
+      studioStandardThree:"معلومات صادقة",
+      studioStandardThreeText:"لا تخترع نتائج للعملاء أو مؤهلات أو وعوداً غير حقيقية.",
+      studioDisclaimer:"ينشئ النظام الحالي قالباً منظماً من مدخلاتك؛ ولم يصبح خدمة كتابة بالذكاء الاصطناعي بعد.",
+      copyDraft:"نسخ المسودة", controlEyebrow:"رؤية الصورة كاملة",
+      controlTitle:"مركز التحكم.",
+      controlIntro:"راجع نشاط مساحة عملك وافهم ما يحتاج إلى اهتمام.",
+      allRecordedTasks:"جميع المهام المسجلة", completedRecorded:"المهام المحددة كمكتملة",
+      stillToDo:"المهام المتبقية", completionRate:"نسبة الإنجاز",
+      currentWorkspaceOnly:"بيانات هذا المتصفح فقط", workspaceStatus:"حالة مساحة العمل",
+      prototypeStatus:"نموذج أولي", statusInterface:"واجهة متجاوبة",
+      statusInterfaceText:"تتكيف الواجهة مع شاشات الهاتف والكمبيوتر.",
+      statusTasks:"إدارة المهام محلياً",
+      statusTasksText:"يمكن إضافة المهام وإكمالها وحذفها وحفظها في هذا المتصفح.",
+      statusAI:"ربط الذكاء الاصطناعي",
+      statusAIText:"غير متصل بعد. ما زلنا بحاجة إلى خادم آمن وربط واجهة الذكاء الاصطناعي.",
+      statusAccounts:"حسابات مستخدمين آمنة",
+      statusAccountsText:"لم تُنفذ بعد. لا تستخدم هذا النموذج لتخزين بيانات العملاء السرية.",
+      statusPayments:"المدفوعات والاشتراكات",
+      statusPaymentsText:"غير متصلة. هذه الصفحة لا تعالج أي دفعات أو اشتراكات.",
+      exportData:"تصدير المهام", clearAllTasks:"حذف جميع المهام",
+      footer:"VELNORA · وضوح وتنفيذ ونمو مستدام.<br>إصدار أولي. لم يتم ربط الذكاء الاصطناعي أو الحسابات الآمنة أو المزامنة السحابية.",
+      taskModalDescription:"أضف إجراءً واضحاً إلى مساحة عملك.",
+      taskName:"اسم المهمة", taskDetails:"التفاصيل (اختياري)",
+      cancel:"إلغاء", saveTask:"حفظ المهمة",
+      emptyResult:"لا توجد مهام بعد. أضف مهمة للبدء.",
+      taskAdded:"تمت إضافة المهمة بنجاح.", taskUpdated:"تم تحديث حالة المهمة.",
+      taskDeleted:"تم حذف المهمة.", tasksDeleted:"تم حذف جميع المهام.",
+      enterTask:"يرجى كتابة اسم المهمة أولاً.", enterGoal:"يرجى وصف هدفك أولاً.",
+      planReady:"جهزنا خطة أولية. راجع الخطوات وعدّلها بما يناسب وضعك.",
+      planTitle:"خطة عمل أولية", dayLabel:"اليوم", phaseLabel:"التركيز",
+      planStep1:"حدّد النتيجة المطلوبة بدقة وكيف ستقيس النجاح.",
+      planStep2:"حدّد الأشخاص والأدوات والمعلومات التي تحتاج إليها.",
+      planStep3:"اختر أصغر خطوة مفيدة ونفّذها.",
+      planStep4:"راجع ما نجح وما لم ينجح وما يحتاج إلى تغيير.",
+      planStep5:"استخدم النتائج لتحديد الأولوية التالية.",
+      briefReady:"تم إعداد ملخص الفرصة التجارية.",
+      customerLabel:"العميل المستهدف", problemLabel:"مشكلة العميل",
+      solutionLabel:"الحل المقترح", nextActions:"الخطوات المقترحة التالية",
+      nextAction1:"تحدث مع عملاء محتملين للتحقق من المشكلة.",
+      nextAction2:"اشرح الفائدة المتوقعة بلغة بسيطة.",
+      nextAction3:"اختبر نسخة صغيرة قبل استثمار الكثير.",
+      selectAudience:"يرجى وصف الجمهور المستهدف.",
+      selectGoal:"يرجى كتابة الهدف الرئيسي.",
+      draftReady:"تم إعداد المسودة المنظمة. راجع جميع التفاصيل قبل استخدامها.",
+      proposalHeading:"مخطط عرض تجاري", emailHeading:"مسودة بريد للعميل",
+      marketingHeading:"مسودة رسالة تسويقية", businessPlanHeading:"مخطط خطة عمل",
+      audienceLabel:"الجمهور", objectiveLabel:"الهدف والتفاصيل",
+      openingLabel:"المقدمة", valueLabel:"القيمة المقترحة",
+      nextStepLabel:"الخطوة التالية المقترحة", reviewLabel:"المراجعة قبل الإرسال",
+      copySuccess:"تم نسخ المسودة.", copyFailed:"تعذر النسخ تلقائياً. حدد النص وانسخه يدوياً.",
+      exportSuccess:"تم تصدير ملف المهام.", exportFailed:"تعذر تصدير المهام.",
+      clearConfirm:"هل تريد حذف كل المهام من هذا المتصفح؟ لا يمكن التراجع عن ذلك.",
+      helpMessage:"VELNORA نموذج أولي. تعمل إدارة المهام وقوالب التخطيط محلياً. لم يتم ربط الذكاء الاصطناعي أو الحسابات الآمنة أو المزامنة السحابية أو المدفوعات.",
+      settingsMessage:"تُحفظ بيانات مساحة العمل حالياً في هذا المتصفح فقط. لم تُنفذ حسابات المستخدمين الآمنة أو إعدادات الحساب بعد.",
+      languageChanged:"تم تغيير اللغة.",
+      taskCountOne:"مهمة", taskCountMany:"مهام",
+      genericError:"حدث خطأ. حاول مرة أخرى.",
+      draftOpening:"مرحباً،",
+      draftClosing:"مع أطيب التحيات،",
+      businessObjective:"اشرح هدف العمل والقيمة التي يُفترض أن يقدمها هذا العرض.",
+      emailObjective:"تواصل بوضوح، واشرح سبب مراسلة العميل، واقترح خطوة تالية واحدة.",
+      marketingObjective:"اعرض مشكلة الجمهور والفائدة المقترحة ودعوة واضحة لاتخاذ إجراء.",
+      planObjective:"لخّص العميل والمشكلة والحل المقترح وطريقة الاختبار والمخاطر الرئيسية."
+    }
+  };
+
+  const $ = id => document.getElementById(id);
+  let language = "en";
+  let tasks = [];
+  let latestPlanSteps = [];
+  let toastTimer;
+
+  function tr(key) {
+    return translations[language][key] || translations.en[key] || key;
+  }
+
+  function safeLoad() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) {
+          tasks = parsed.filter(item =>
+            item &&
+            Number.isFinite(item.id) &&
+            typeof item.title === "string"
+          ).map(item => ({
+            id: item.id,
+            title: item.title.slice(0,160),
+            details: typeof item.details === "string" ? item.details.slice(0,800) : "",
+            done: Boolean(item.done),
+            createdAt: Number(item.createdAt) || Date.now()
+          }));
+        }
+      }
+      const savedLanguage = localStorage.getItem(LANGUAGE_KEY);
+      if (savedLanguage === "ar" || savedLanguage === "en") language = savedLanguage;
+    } catch (error) {
+      tasks = [];
+    }
+  }
+
+  function saveTasks() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+      return true;
+    } catch (error) {
+      showToast(tr("genericError"));
+      return false;
+    }
+  }
+
+  function showToast(message) {
+    const toast = $("toast");
+    toast.textContent = message;
+    toast.classList.add("visible");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove("visible"), 3400);
+  }
+
+  function setText(id, value) {
+    const element = $(id);
+    if (element) element.textContent = value;
+  }
+
+  function applyLanguage() {
+    document.documentElement.lang = language;
+    document.documentElement.dir = language === "ar" ? "rtl" : "ltr";
+    document.body.classList.toggle("rtl", language === "ar");
+    $("languageButton").textContent = language === "en" ? "عربي" : "English";
+
+    document.querySelectorAll("[data-i18n]").forEach(element => {
+      const key = element.getAttribute("data-i18n");
+      const translated = translations[language][key];
+      if (translated !== undefined) element.innerHTML = translated;
+    });
+
+    document.querySelectorAll("[data-placeholder]").forEach(element => {
+      const key = element.getAttribute("data-placeholder");
+      const translated = translations[language][key];
+      if (translated) element.placeholder = translated;
+    });
+
+    renderTasks();
+    updateBreadcrumb();
+  }
+
+  function updateBreadcrumb() {
+    const active = document.querySelector(".nav-item.active");
+    if (!active) return;
+    const label = active.querySelector(".nav-label");
+    setText("breadcrumbCurrent", label ? label.textContent : tr("dashboard"));
+  }
+
+  function navigate(page) {
+    if (!$("page-" + page)) page = "dashboard";
+
+    document.querySelectorAll(".page").forEach(element => {
+      element.classList.toggle("active", element.id === "page-" + page);
+    });
+
+    document.querySelectorAll(".nav-item[data-page]").forEach(element => {
+      element.classList.toggle("active", element.dataset.page === page);
+    });
+
+    updateBreadcrumb();
+
+    if (page === "control") renderControl();
+    if (page === "workforce") renderWorkforce();
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function createTaskElement(task, compact) {
+    const row = document.createElement("div");
+    row.className = "task-row" + (task.done ? " completed" : "");
+
+    const checkbox = document.createElement("input");
+    checkbox.className = "task-checkbox";
+    checkbox.type = "checkbox";
+    checkbox.checked = task.done;
+    checkbox.setAttribute("aria-label", task.title);
+    checkbox.addEventListener("change", () => {
+      task.done = checkbox.checked;
+      saveTasks();
+      renderTasks();
+      showToast(tr("taskUpdated"));
+    });
+
+    const content = document.createElement("div");
+    content.className = "task-content";
+
+    const title = document.createElement("div");
+    title.className = "task-title";
+    title.textContent = task.title;
+    content.appendChild(title);
+
+    if (task.details && !compact) {
+      const details = document.createElement("div");
+      details.className = "task-details";
+      details.textContent = task.details;
+      content.appendChild(details);
+    }
+
+    const badge = document.createElement("span");
+    badge.className = "badge" + (task.done ? " done" : "");
+    badge.textContent = task.done ? tr("done") : tr("pending");
+
+    row.append(checkbox, content, badge);
+    return row;
+  }
+
+  function renderTasks() {
+    const dashboardList = $("dashboardTaskList");
+    dashboardList.replaceChildren();
+
+    if (!tasks.length) {
+      const empty = document.createElement("div");
+      empty.className = "empty-state";
+      empty.textContent = tr("noTasks");
+      dashboardList.appendChild(empty);
+    } else {
+      const sorted = [...tasks].sort((a,b) => Number(a.done) - Number(b.done));
+      sorted.slice(0,5).forEach(task => {
+        dashboardList.appendChild(createTaskElement(task, true));
+      });
+    }
+
+    const total = tasks.length;
+    const completed = tasks.filter(task => task.done).length;
+    const active = total - completed;
+    const rate = total ? Math.round(completed / total * 100) : 0;
+
+    setText("totalTasks", String(total).padStart(2,"0"));
+    setText("completedTasks", String(completed).padStart(2,"0"));
+    setText("activeTasks", String(active).padStart(2,"0"));
+    setText("completionPercent", rate + "%");
+    setText("goalProgress", rate + "%");
+    setText("overallProgressText", rate + "%");
+    $("overallProgressBar").style.width = rate + "%";
+
+    renderWorkforce();
+    renderControl();
+  }
+
+  function renderWorkforce() {
+    const body = $("workforceTableBody");
+    const empty = $("workforceEmpty");
+    body.replaceChildren();
+
+    setText("workforceTaskCount", tasks.length + " " + (tasks.length === 1 ? tr("taskCountOne") : tr("taskCountMany")));
+    empty.hidden = tasks.length !== 0;
+
+    tasks.forEach(task => {
+      const row = document.createElement("tr");
+
+      const titleCell = document.createElement("td");
+      titleCell.textContent = task.title;
+
+      const statusCell = document.createElement("td");
+      const badge = document.createElement("span");
+      badge.className = "badge" + (task.done ? " done" : "");
+      badge.textContent = task.done ? tr("done") : tr("pending");
+      statusCell.appendChild(badge);
+
+      const actionCell = document.createElement("td");
+      const actions = document.createElement("div");
+      actions.style.display = "flex";
+      actions.style.gap = "6px";
+      actions.style.flexWrap = "wrap";
+
+      const toggleButton = document.createElement("button");
+      toggleButton.className = "button button-secondary button-small";
+      toggleButton.textContent = task.done ? tr("markPending") : tr("markComplete");
+      toggleButton.addEventListener("click", () => {
+        task.done = !task.done;
+        saveTasks();
+        renderTasks();
+        showToast(tr("taskUpdated"));
+      });
+
+      const deleteButton = document.createElement("button");
+      deleteButton.className = "button button-danger button-small";
+      deleteButton.textContent = tr("delete");
+      deleteButton.addEventListener("click", () => {
+        tasks = tasks.filter(item => item.id !== task.id);
+        saveTasks();
+        renderTasks();
+        showToast(tr("taskDeleted"));
+      });
+
+      actions.append(toggleButton, deleteButton);
+      actionCell.appendChild(actions);
+      row.append(titleCell, statusCell, actionCell);
+      body.appendChild(row);
+    });
+  }
+
+  function renderControl() {
+    const total = tasks.length;
+    const completed = tasks.filter(task => task.done).length;
+    const active = total - completed;
+    const rate = total ? Math.round(completed / total * 100) : 0;
+
+    setText("controlTotal", total);
+    setText("controlCompleted", completed);
+    setText("controlActive", active);
+    setText("controlRate", rate + "%");
+  }
+
+  function openTaskModal() {
+    $("taskModal").classList.add("open");
+    $("taskTitleInput").focus();
+  }
+
+  function closeTaskModal() {
+    $("taskModal").classList.remove("open");
+    $("taskForm").reset();
+  }
+
+  $("taskForm").addEventListener("submit", event => {
+    event.preventDefault();
+
+    const title = $("taskTitleInput").value.trim();
+    const details = $("taskDetailsInput").value.trim();
+
+    if (!title) {
+      showToast(tr("enterTask"));
+      return;
+    }
+
+    tasks.unshift({
+      id: Date.now() + Math.floor(Math.random() * 1000),
+      title: title.slice(0,160),
+      details: details.slice(0,800),
+      done: false,
+      createdAt: Date.now()
+    });
+
+    saveTasks();
+    closeTaskModal();
+    renderTasks();
+    showToast(tr("taskAdded"));
+  });
+
+  function buildPlan(goal, days) {
+    const steps = [
+      tr("planStep1"),
+      tr("planStep2"),
+      tr("planStep3"),
+      tr("planStep4"),
+      tr("planStep5")
+    ];
+
+    latestPlanSteps = steps.map((title,index) => ({
+      title: title,
+      details: goal.slice(0,250),
+      day: Math.max(1, Math.ceil((index + 1) * Number(days) / steps.length))
+    }));
+
+    const result = [
+      tr("planTitle"),
+      "",
+      (language === "ar" ? "الهدف: " : "Goal: ") + goal,
+      "",
+      ...latestPlanSteps.map((step,index) =>
+        tr("dayLabel") + " " + step.day + " — " + step.title
+      ),
+      "",
+      tr("planReady")
+    ].join("\n");
+
+    $("goalResult").textContent = result;
+    $("addPlanTasks").hidden = false;
+  }
+
+  $("goalForm").addEventListener("submit", event => {
+    event.preventDefault();
+
+    const goal = $("goalInput").value.trim();
+    const days = $("goalPeriod").value;
+
+    if (!goal) {
+      showToast(tr("enterGoal"));
+      return;
+    }
+
+    buildPlan(goal, days);
+  });
+
+  $("addPlanTasks").addEventListener("click", () => {
+    if (!latestPlanSteps.length) return;
+
+    const goal = $("goalInput").value.trim();
+
+    latestPlanSteps.forEach(step => {
+      tasks.push({
+        id: Date.now() + Math.floor(Math.random() * 100000),
+        title: step.title,
+        details: (language === "ar" ? "الهدف: " : "Goal: ") + goal,
+        done: false,
+        createdAt: Date.now()
+      });
+    });
+
+    saveTasks();
+    renderTasks();
+    showToast(tr("taskAdded"));
+    navigate("workforce");
+  });
+
+  $("growthForm").addEventListener("submit", event => {
+    event.preventDefault();
+
+    const audience = $("customerType").value.trim();
+    const problem = $("customerProblem").value.trim();
+    const solution = $("customerOffer").value.trim();
+
+    if (!audience || !problem || !solution) {
+      showToast(tr("selectAudience"));
+      return;
+    }
+
+    $("growthResult").textContent = [
+      tr("briefReady"),
+      "",
+      tr("customerLabel") + ": " + audience,
+      "",
+      tr("problemLabel") + ": " + problem,
+      "",
+      tr("solutionLabel") + ": " + solution,
+      "",
+      tr("nextActions"),
+      "1. " + tr("nextAction1"),
+      "2. " + tr("nextAction2"),
+      "3. " + tr("nextAction3")
+    ].join("\n");
+  });
+
+  $("studioForm").addEventListener("submit", event => {
+    event.preventDefault();
+
+    const type = $("contentType").value;
+    const audience = $("contentAudience").value.trim();
+    const goal = $("contentGoal").value.trim();
+
+    if (!audience || !goal) {
+      showToast(tr("selectGoal"));
+      return;
+    }
+
+    const headings = {
+      proposal: "proposalHeading",
+      email: "emailHeading",
+      marketing: "marketingHeading",
+      plan: "businessPlanHeading"
+    };
+
+    const objectives = {
+      proposal: "businessObjective",
+      email: "emailObjective",
+      marketing: "marketingObjective",
+      plan: "planObjective"
+    };
+
+    const output = [
+      tr(headings[type]),
+      "",
+      tr("audienceLabel") + ": " + audience,
+      "",
+      tr("objectiveLabel") + ": " + goal,
+      "",
+      tr("openingLabel") + ":",
+      type === "email" ? tr("draftOpening") : tr(objectives[type]),
+      "",
+      tr("valueLabel") + ":",
+      goal,
+      "",
+      tr("nextStepLabel") + ":",
+      type === "email" ? tr("draftClosing") : tr("nextAction3"),
+      "",
+      tr("reviewLabel") + ":",
+      language === "ar"
+        ? "تحقق من دقة المعلومات والوعود والأسعار قبل استخدام هذه المسودة."
+        : "Verify all facts, claims, and prices before using this draft."
+    ].join("\n");
+
+    $("studioResult").textContent = output;
+    $("copyDraftButton").hidden = false;
+  });
+
+  $("copyDraftButton").addEventListener("click", async () => {
+    const text = $("studioResult").textContent;
+    if (!text) return;
+
+    try {
+      await navigator.clipboard.writeText(text);
+      showToast(tr("copySuccess"));
+    } catch (error) {
+      const area = document.createElement("textarea");
+      area.value = text;
+      area.style.position = "fixed";
+      area.style.opacity = "0";
+      document.body.appendChild(area);
+      area.select();
+
+      let copied = false;
+      try { copied = document.execCommand("copy"); } catch (e) {}
+
+      area.remove();
+      showToast(copied ? tr("copySuccess") : tr("copyFailed"));
+    }
+  });
+
+  $("exportDataButton").addEventListener("click", () => {
+    try {
+      const content = JSON.stringify({
+        product: "VELNORA",
+        exportedAt: new Date().toISOString(),
+        tasks: tasks
+      }, null, 2);
+
+      const blob = new Blob([content], {type:"application/json;charset=utf-8"});
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "velnora-tasks.json";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+      showToast(tr("exportSuccess"));
+    } catch (error) {
+      showToast(tr("exportFailed"));
+    }
+  });
+
+  $("clearTasksButton").addEventListener("click", () => {
+    if (!window.confirm(tr("clearConfirm"))) return;
+    tasks = [];
+    saveTasks();
+    renderTasks();
+    showToast(tr("tasksDeleted"));
+  });
+
+  $("languageButton").addEventListener("click", () => {
+    language = language === "en" ? "ar" : "en";
+    try { localStorage.setItem(LANGUAGE_KEY, language); } catch (error) {}
+    applyLanguage();
+    showToast(tr("languageChanged"));
+  });
+
+  $("newTaskButton").addEventListener("click", openTaskModal);
+  $("workforceNewTask").addEventListener("click", openTaskModal);
+  $("closeTaskModal").addEventListener("click", closeTaskModal);
+  $("cancelTaskButton").addEventListener("click", closeTaskModal);
+
+  $("taskModal").addEventListener("click", event => {
+    if (event.target === $("taskModal")) closeTaskModal();
+  });
+
+  document.addEventListener("keydown", event => {
+    if (event.key === "Escape") closeTaskModal();
+  });
+
+  $("viewAllTasks").addEventListener("click", () => navigate("workforce"));
+
+  $("createPlanButton").addEventListener("click", () => {
+    navigate("intelligence");
+    $("goalInput").focus();
+  });
+
+  $("settingsButton").addEventListener("click", () => {
+    showToast(tr("settingsMessage"));
+  });
+
+  $("helpButton").addEventListener("click", () => {
+    showToast(tr("helpMessage"));
+  });
+
+  document.querySelectorAll(".nav-item[data-page]").forEach(button => {
+    button.addEventListener("click", () => navigate(button.dataset.page));
+  });
+
+  document.querySelectorAll("[data-open-page]").forEach(module => {
+    function open() { navigate(module.dataset.openPage); }
+
+    module.addEventListener("click", open);
+    module.addEventListener("keydown", event => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        open();
+      }
+    });
+  });
+
+  safeLoad();
+  applyLanguage();
+})();
+</script>
+</body>
+</html>
