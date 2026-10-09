@@ -4,6 +4,9 @@
   "private": true,
   "description": "VELNORA Global AI Operating Platform",
   "main": "server.js",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "start": "node server.js"
   },
