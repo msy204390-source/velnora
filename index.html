@@ -684,15 +684,13 @@
 
     .toast.visible { display: block; animation: appear .2s ease; }
 
+    /* RTL: with dir="rtl" the grid already flips, so the sidebar sits on the right.
+       Only the border and text alignment need adjusting. */
     .rtl { direction: rtl; }
-    body.rtl .app { grid-template-columns: minmax(0,1fr) 248px; }
     body.rtl .sidebar {
-      grid-column: 2;
-      grid-row: 1;
       border-right: 0;
       border-left: 1px solid var(--border);
     }
-    body.rtl .main { grid-column: 1; grid-row: 1; }
     body.rtl .nav-item { text-align: right; }
     body.rtl .nav-section-title { text-align: right; }
     body.rtl .data-table { text-align: right; }
@@ -971,7 +969,7 @@
 
             <form id="goalForm">
               <label class="form-label" for="goalInput" data-i18n="yourGoal">Your goal</label>
-              <textarea class="field" id="goalInput" maxlength="1200" required data-placeholder="goalPlaceholder" placeholder="What do you want to achieve?"></textarea>
+              <textarea class="field" id="goalInput" maxlength="1200" required data-ph="goalPlaceholder" placeholder="What do you want to achieve?"></textarea>
 
               <label class="form-label" for="goalPeriod" data-i18n="timeframe">Timeframe</label>
               <select class="field" id="goalPeriod">
@@ -986,7 +984,7 @@
               </div>
             </form>
 
-            <div class="result-box" id="goalResult" aria-live="polite" data-placeholder="Your plan will appear here."></div>
+            <div class="result-box" id="goalResult" aria-live="polite" data-empty="goalResultEmpty" data-placeholder="Your plan will appear here."></div>
             <button class="button button-secondary button-small" id="addPlanTasks" style="margin-top:12px" hidden data-i18n="addPlanTasks">Add plan steps to tasks</button>
           </div>
 
@@ -1063,20 +1061,20 @@
             <h2 data-i18n="customerProfile">Customer opportunity brief</h2>
             <form id="growthForm">
               <label class="form-label" for="customerType" data-i18n="targetCustomer">Target customer</label>
-              <input class="field" id="customerType" maxlength="200" required placeholder="e.g. Small online businesses">
+              <input class="field" id="customerType" maxlength="200" required data-ph="customerTypePlaceholder" placeholder="e.g. Small online businesses">
 
               <label class="form-label" for="customerProblem" data-i18n="customerProblem">Customer problem</label>
-              <textarea class="field" id="customerProblem" maxlength="1000" required placeholder="What problem do they need to solve?"></textarea>
+              <textarea class="field" id="customerProblem" maxlength="1000" required data-ph="customerProblemPlaceholder" placeholder="What problem do they need to solve?"></textarea>
 
               <label class="form-label" for="customerOffer" data-i18n="yourOffer">Your proposed solution</label>
-              <textarea class="field" id="customerOffer" maxlength="1000" required placeholder="How could you help them?"></textarea>
+              <textarea class="field" id="customerOffer" maxlength="1000" required data-ph="customerOfferPlaceholder" placeholder="How could you help them?"></textarea>
 
               <div class="form-actions">
                 <button class="button button-primary" type="submit" data-i18n="createBrief">Create brief</button>
                 <button class="button button-secondary" type="reset" data-i18n="clear">Clear</button>
               </div>
             </form>
-            <div class="result-box" id="growthResult" aria-live="polite" data-placeholder="Your opportunity brief will appear here."></div>
+            <div class="result-box" id="growthResult" aria-live="polite" data-empty="growthResultEmpty" data-placeholder="Your opportunity brief will appear here."></div>
           </div>
 
           <div class="card">
@@ -1115,17 +1113,17 @@
               </select>
 
               <label class="form-label" for="contentAudience" data-i18n="contentAudience">Audience</label>
-              <input class="field" id="contentAudience" maxlength="200" required placeholder="Who is this for?">
+              <input class="field" id="contentAudience" maxlength="200" required data-ph="audiencePlaceholder" placeholder="Who is this for?">
 
               <label class="form-label" for="contentGoal" data-i18n="contentGoal">Main objective and details</label>
-              <textarea class="field" id="contentGoal" maxlength="1500" required placeholder="Describe what you want to communicate."></textarea>
+              <textarea class="field" id="contentGoal" maxlength="1500" required data-ph="contentGoalPlaceholder" placeholder="Describe what you want to communicate."></textarea>
 
               <div class="form-actions">
                 <button class="button button-primary" type="submit" data-i18n="generateDraft">Generate draft</button>
                 <button class="button button-secondary" type="reset" data-i18n="clear">Clear</button>
               </div>
             </form>
-            <div class="result-box" id="studioResult" aria-live="polite" data-placeholder="Your draft will appear here."></div>
+            <div class="result-box" id="studioResult" aria-live="polite" data-empty="studioResultEmpty" data-placeholder="Your draft will appear here."></div>
             <button class="button button-secondary button-small" id="copyDraftButton" style="margin-top:12px" hidden data-i18n="copyDraft">Copy draft</button>
           </div>
 
@@ -1189,17 +1187,17 @@
 <div class="modal-backdrop" id="taskModal">
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="taskModalTitle">
     <div class="modal-header">
-      <h2 id="taskModalTitle">Create a task</h2>
+      <h2 id="taskModalTitle" data-i18n="createTaskTitle">Create a task</h2>
       <button class="icon-button" type="button" id="closeTaskModal" aria-label="Close">✕</button>
     </div>
     <p class="modal-description" data-i18n="taskModalDescription">Add a clear action to your workspace.</p>
 
     <form id="taskForm">
       <label class="form-label" for="taskTitleInput" data-i18n="taskName">Task name</label>
-      <input class="field" id="taskTitleInput" maxlength="160" required placeholder="What needs to be done?">
+      <input class="field" id="taskTitleInput" maxlength="160" required data-ph="taskTitlePlaceholder" placeholder="What needs to be done?">
 
       <label class="form-label" for="taskDetailsInput" data-i18n="taskDetails">Details (optional)</label>
-      <textarea class="field" id="taskDetailsInput" maxlength="800" placeholder="Add a few details"></textarea>
+      <textarea class="field" id="taskDetailsInput" maxlength="800" data-ph="taskDetailsPlaceholder" placeholder="Add a few details"></textarea>
 
       <div class="modal-actions">
         <button class="button button-secondary" type="button" id="cancelTaskButton" data-i18n="cancel">Cancel</button>
@@ -1302,8 +1300,19 @@
       statusPaymentsText:"Not connected. No subscription or payment is processed by this page.",
       exportData:"Export tasks", clearAllTasks:"Delete all tasks",
       footer:"VELNORA · Built for clarity, execution, and sustainable growth.<br>Prototype release. AI services, secure accounts, and cloud synchronization are not connected.",
+      createTaskTitle:"Create a task",
       taskModalDescription:"Add a clear action to your workspace.",
       taskName:"Task name", taskDetails:"Details (optional)", cancel:"Cancel", saveTask:"Save task",
+      taskTitlePlaceholder:"What needs to be done?",
+      taskDetailsPlaceholder:"Add a few details",
+      customerTypePlaceholder:"e.g. Small online businesses",
+      customerProblemPlaceholder:"What problem do they need to solve?",
+      customerOfferPlaceholder:"How could you help them?",
+      audiencePlaceholder:"Who is this for?",
+      contentGoalPlaceholder:"Describe what you want to communicate.",
+      goalResultEmpty:"Your plan will appear here.",
+      growthResultEmpty:"Your opportunity brief will appear here.",
+      studioResultEmpty:"Your draft will appear here.",
       emptyResult:"No tasks yet. Add a task to begin.",
       taskAdded:"Task added successfully.", taskUpdated:"Task status updated.",
       taskDeleted:"Task deleted.", tasksDeleted:"All tasks deleted.",
@@ -1432,9 +1441,20 @@
       statusPaymentsText:"غير متصلة. هذه الصفحة لا تعالج أي دفعات أو اشتراكات.",
       exportData:"تصدير المهام", clearAllTasks:"حذف جميع المهام",
       footer:"VELNORA · وضوح وتنفيذ ونمو مستدام.<br>إصدار أولي. لم يتم ربط الذكاء الاصطناعي أو الحسابات الآمنة أو المزامنة السحابية.",
+      createTaskTitle:"إنشاء مهمة",
       taskModalDescription:"أضف إجراءً واضحاً إلى مساحة عملك.",
       taskName:"اسم المهمة", taskDetails:"التفاصيل (اختياري)",
       cancel:"إلغاء", saveTask:"حفظ المهمة",
+      taskTitlePlaceholder:"ما الذي يجب إنجازه؟",
+      taskDetailsPlaceholder:"أضف بعض التفاصيل",
+      customerTypePlaceholder:"مثال: أصحاب المتاجر الإلكترونية الصغيرة",
+      customerProblemPlaceholder:"ما المشكلة التي يحتاجون إلى حلها؟",
+      customerOfferPlaceholder:"كيف يمكنك مساعدتهم؟",
+      audiencePlaceholder:"لمن هذه الرسالة؟",
+      contentGoalPlaceholder:"اشرح ما تريد إيصاله.",
+      goalResultEmpty:"ستظهر خطتك هنا.",
+      growthResultEmpty:"سيظهر ملخص الفرصة هنا.",
+      studioResultEmpty:"ستظهر مسودتك هنا.",
       emptyResult:"لا توجد مهام بعد. أضف مهمة للبدء.",
       taskAdded:"تمت إضافة المهمة بنجاح.", taskUpdated:"تم تحديث حالة المهمة.",
       taskDeleted:"تم حذف المهمة.", tasksDeleted:"تم حذف جميع المهام.",
@@ -1487,16 +1507,24 @@
     return translations[language][key] || translations.en[key] || key;
   }
 
+  // Sequential IDs avoid the (rare) collisions of Date.now() + random.
+  function nextId() {
+    return tasks.reduce((max, task) => Math.max(max, task.id), 0) + 1;
+  }
+
   function safeLoad() {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
         const parsed = JSON.parse(raw);
         if (Array.isArray(parsed)) {
+          const seen = new Set();
           tasks = parsed.filter(item =>
             item &&
             Number.isFinite(item.id) &&
-            typeof item.title === "string"
+            typeof item.title === "string" &&
+            !seen.has(item.id) &&
+            seen.add(item.id)
           ).map(item => ({
             id: item.id,
             title: item.title.slice(0,160),
@@ -1523,12 +1551,12 @@
     }
   }
 
-  function showToast(message) {
+  function showToast(message, duration) {
     const toast = $("toast");
     toast.textContent = message;
     toast.classList.add("visible");
     clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => toast.classList.remove("visible"), 3400);
+    toastTimer = setTimeout(() => toast.classList.remove("visible"), duration || 3400);
   }
 
   function setText(id, value) {
@@ -1548,10 +1576,16 @@
       if (translated !== undefined) element.innerHTML = translated;
     });
 
-    document.querySelectorAll("[data-placeholder]").forEach(element => {
-      const key = element.getAttribute("data-placeholder");
-      const translated = translations[language][key];
+    // Input / textarea placeholders
+    document.querySelectorAll("[data-ph]").forEach(element => {
+      const translated = translations[language][element.getAttribute("data-ph")];
       if (translated) element.placeholder = translated;
+    });
+
+    // Empty-state text shown inside result boxes (via CSS attr())
+    document.querySelectorAll("[data-empty]").forEach(element => {
+      const translated = translations[language][element.getAttribute("data-empty")];
+      if (translated) element.setAttribute("data-placeholder", translated);
     });
 
     renderTasks();
@@ -1743,7 +1777,7 @@
     }
 
     tasks.unshift({
-      id: Date.now() + Math.floor(Math.random() * 1000),
+      id: nextId(),
       title: title.slice(0,160),
       details: details.slice(0,800),
       done: false,
@@ -1801,6 +1835,22 @@
     buildPlan(goal, days);
   });
 
+  // "Clear" buttons also clear the generated output
+  $("goalForm").addEventListener("reset", () => {
+    $("goalResult").textContent = "";
+    $("addPlanTasks").hidden = true;
+    latestPlanSteps = [];
+  });
+
+  $("growthForm").addEventListener("reset", () => {
+    $("growthResult").textContent = "";
+  });
+
+  $("studioForm").addEventListener("reset", () => {
+    $("studioResult").textContent = "";
+    $("copyDraftButton").hidden = true;
+  });
+
   $("addPlanTasks").addEventListener("click", () => {
     if (!latestPlanSteps.length) return;
 
@@ -1808,7 +1858,7 @@
 
     latestPlanSteps.forEach(step => {
       tasks.push({
-        id: Date.now() + Math.floor(Math.random() * 100000),
+        id: nextId(),
         title: step.title,
         details: (language === "ar" ? "الهدف: " : "Goal: ") + goal,
         done: false,
@@ -1984,11 +2034,11 @@
   });
 
   $("settingsButton").addEventListener("click", () => {
-    showToast(tr("settingsMessage"));
+    showToast(tr("settingsMessage"), 7000);
   });
 
   $("helpButton").addEventListener("click", () => {
-    showToast(tr("helpMessage"));
+    showToast(tr("helpMessage"), 7000);
   });
 
   document.querySelectorAll(".nav-item[data-page]").forEach(button => {
