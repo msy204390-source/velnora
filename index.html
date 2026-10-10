@@ -6,7 +6,6 @@
   <meta name="theme-color" content="#080b14">
   <meta name="description" content="VELNORA brings AI, automation, software and business intelligence together in one platform.">
   <title>VELNORA — Intelligence Without Limits</title>
-
   <style>
     :root {
       --bg: #080b14;
@@ -21,9 +20,7 @@
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
-
     html { scroll-behavior: smooth; }
-
     body {
       background: var(--bg);
       color: var(--text);
@@ -35,11 +32,7 @@
     button, a { -webkit-tap-highlight-color: transparent; }
     a { color: inherit; text-decoration: none; }
     button { cursor: pointer; }
-
-    .container {
-      width: min(1120px, 92%);
-      margin: auto;
-    }
+    .container { width: min(1120px, 92%); margin: auto; }
 
     header {
       position: sticky;
@@ -58,12 +51,7 @@
       gap: 18px;
     }
 
-    .logo {
-      font-size: 25px;
-      font-weight: 850;
-      letter-spacing: 2px;
-    }
-
+    .logo { font-size: 25px; font-weight: 850; letter-spacing: 2px; }
     .logo span { color: var(--accent); }
 
     .nav-links {
@@ -75,12 +63,7 @@
     }
 
     .nav-links a:hover { color: white; }
-
-    .nav-actions {
-      display: flex;
-      align-items: center;
-      gap: 9px;
-    }
+    .nav-actions { display: flex; align-items: center; gap: 9px; }
 
     .button {
       border: 1px solid var(--border);
@@ -96,11 +79,7 @@
       transition: .2s;
     }
 
-    .button:hover {
-      transform: translateY(-2px);
-      border-color: var(--accent);
-    }
-
+    .button:hover { transform: translateY(-2px); border-color: var(--accent); }
     .button-primary {
       background: linear-gradient(120deg, #8a6cff, #5d9dff);
       border: none;
@@ -169,16 +148,8 @@
       gap: 12px;
     }
 
-    .trust-line {
-      color: var(--muted);
-      font-size: 12px;
-      margin-top: 24px;
-    }
-
-    section {
-      padding: 70px 0;
-      scroll-margin-top: 85px;
-    }
+    .trust-line { color: var(--muted); font-size: 12px; margin-top: 24px; }
+    section { padding: 70px 0; scroll-margin-top: 85px; }
 
     .section-heading {
       max-width: 720px;
@@ -417,7 +388,6 @@
 </head>
 
 <body dir="ltr">
-
 <header>
   <div class="container nav">
     <a class="logo" href="#home" aria-label="VELNORA Home">VEL<span>N</span>ORA</a>
@@ -683,7 +653,6 @@ async function loadAI(statusBubble) {
       : "جارٍ تحميل مكتبة الذكاء الاصطناعي...";
 
     const { CreateMLCEngine } = await import("https://esm.run/@mlc-ai/web-llm");
-
     const model = "Qwen2.5-0.5B-Instruct-q4f16_1-MLC";
 
     engine = await CreateMLCEngine(model, {
@@ -752,14 +721,12 @@ chatForm.addEventListener("submit", async (event) => {
   } catch (error) {
     console.error("VELNORA AI error:", error);
 
+    const details = error?.message || String(error);
+
     statusBubble.textContent =
-      error.message === "WEBGPU_UNAVAILABLE"
-        ? (language === "en"
-            ? "This browser or device does not support WebGPU. Try an updated compatible browser."
-            : "هذا المتصفح أو الجهاز لا يدعم WebGPU. جرّب متصفحاً حديثاً ومتوافقاً.")
-        : (language === "en"
-            ? "The local AI could not start. Check your internet connection, browser compatibility and available device memory, then reload and try again."
-            : "تعذّر تشغيل الذكاء الاصطناعي المحلي. تحقّق من اتصال الإنترنت وتوافق المتصفح والذاكرة المتاحة، ثم أعد تحميل الصفحة وحاول مجدداً.");
+      (language === "en" ? "AI startup error: " : "خطأ تشغيل الذكاء الاصطناعي: ") +
+      details.slice(0, 700);
+
   } finally {
     sendButton.disabled = false;
     messageInput.focus();
@@ -769,6 +736,5 @@ chatForm.addEventListener("submit", async (event) => {
 
 setLanguage("en");
 </script>
-
 </body>
 </html>
