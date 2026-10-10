@@ -2,7 +2,7 @@
   "name": "velnora",
   "version": "1.0.0",
   "private": true,
-  "description": "VELNORA Global AI Operating Platform",
+  "description": "VELNORA Global AI Platform",
   "main": "server.js",
   "engines": {
     "node": ">=20"
