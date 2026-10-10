@@ -11,10 +11,8 @@ const INDEX_FILE = path.join(__dirname, "index.html");
 
 app.disable("x-powered-by");
 
-// Parse JSON requests safely
 app.use(express.json({ limit: "20kb" }));
 
-// Basic health check
 app.get("/api/health", (req, res) => {
   res.set("Cache-Control", "no-store");
 
@@ -27,14 +25,12 @@ app.get("/api/health", (req, res) => {
   });
 });
 
-// Main website
 app.get("/", (req, res, next) => {
   res.sendFile(INDEX_FILE, (err) => {
     if (err) next(err);
   });
 });
 
-// AI endpoint — placeholder until a real provider is configured
 app.post("/api/chat", (req, res) => {
   const message = req.body?.message;
 
@@ -56,12 +52,10 @@ app.post("/api/chat", (req, res) => {
     success: false,
     aiConnected: false,
     error: "AI_NOT_CONFIGURED",
-    message:
-      "The VELNORA AI engine has not been configured yet."
+    message: "The VELNORA AI engine has not been configured yet."
   });
 });
 
-// Unknown API routes
 app.use("/api", (req, res) => {
   res.status(404).json({
     success: false,
@@ -69,7 +63,6 @@ app.use("/api", (req, res) => {
   });
 });
 
-// General error handler
 app.use((err, req, res, next) => {
   console.error("Request error:", err.message);
 
@@ -78,28 +71,25 @@ app.use((err, req, res, next) => {
   }
 
   const status =
-    Number.isInteger(err.status) &&
-    err.status >= 400 &&
-    err.status < 600
+    Number.isInteger(err.status) && err.status >= 400 && err.status < 600
       ? err.status
       : 500;
 
   res.status(status).json({
     success: false,
-    error:
-      status === 500
-        ? "An internal server error occurred."
-        : err.message
+    error: status === 500 ? "An internal server error occurred." : err.message
   });
 });
 
-// Start server
 const server = app.listen(PORT, HOST, () => {
   console.log(`VELNORA server listening on port ${PORT}`);
 });
 
-// Handle unexpected server errors
 server.on("error", (err) => {
   console.error("Server startup error:", err);
   process.exitCode = 1;
+});
+
+process.on("SIGTERM", () => {
+  server.close(() => process.exit(0));
 });
