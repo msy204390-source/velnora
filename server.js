@@ -10,9 +10,9 @@ const HOST = "0.0.0.0";
 const INDEX_FILE = path.join(__dirname, "index.html");
 
 app.disable("x-powered-by");
-
 app.use(express.json({ limit: "20kb" }));
 
+// Health check
 app.get("/api/health", (req, res) => {
   res.set("Cache-Control", "no-store");
 
@@ -25,12 +25,14 @@ app.get("/api/health", (req, res) => {
   });
 });
 
+// Main page
 app.get("/", (req, res, next) => {
   res.sendFile(INDEX_FILE, (err) => {
     if (err) next(err);
   });
 });
 
+// AI chat endpoint
 app.post("/api/chat", (req, res) => {
   const message = req.body?.message;
 
@@ -56,6 +58,7 @@ app.post("/api/chat", (req, res) => {
   });
 });
 
+// Unknown API endpoints
 app.use("/api", (req, res) => {
   res.status(404).json({
     success: false,
@@ -63,6 +66,7 @@ app.use("/api", (req, res) => {
   });
 });
 
+// Error handler
 app.use((err, req, res, next) => {
   console.error("Request error:", err.message);
 
@@ -77,10 +81,14 @@ app.use((err, req, res, next) => {
 
   res.status(status).json({
     success: false,
-    error: status === 500 ? "An internal server error occurred." : err.message
+    error:
+      status === 500
+        ? "An internal server error occurred."
+        : err.message
   });
 });
 
+// Start server
 const server = app.listen(PORT, HOST, () => {
   console.log(`VELNORA server listening on port ${PORT}`);
 });
@@ -90,6 +98,9 @@ server.on("error", (err) => {
   process.exitCode = 1;
 });
 
+// Graceful shutdown
 process.on("SIGTERM", () => {
-  server.close(() => process.exit(0));
+  server.close(() => {
+    process.exit(0);
+  });
 });
