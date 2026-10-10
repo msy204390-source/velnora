@@ -2,17 +2,20 @@
 
 const express = require("express");
 const path = require("path");
+const OpenAI = require("openai");
 
 const app = express();
 
 const PORT = Number(process.env.PORT) || 3000;
 const HOST = "0.0.0.0";
+
 const INDEX_FILE = path.join(__dirname, "index.html");
 
 app.disable("x-powered-by");
+
 app.use(express.json({ limit: "20kb" }));
 
-// Health check
+// VELNORA health check
 app.get("/api/health", (req, res) => {
   res.set("Cache-Control", "no-store");
 
@@ -20,20 +23,18 @@ app.get("/api/health", (req, res) => {
     success: true,
     platform: "VELNORA",
     status: "online",
-    version: "1.0.0",
-    aiConnected: false
+    version: "2.0.0",
+    aiConfigured: Boolean(process.env.OPENAI_API_KEY)
   });
 });
 
-// Main page
-app.get("/", (req, res, next) => {
-  res.sendFile(INDEX_FILE, (err) => {
-    if (err) next(err);
-  });
+// Main website
+app.get("/", (req, res) => {
+  res.sendFile(INDEX_FILE);
 });
 
-// AI chat endpoint
-app.post("/api/chat", (req, res) => {
+// AI assistant
+app.post("/api/chat", async (req, res) => {
   const message = req.body?.message;
 
   if (typeof message !== "string" || !message.trim()) {
@@ -50,15 +51,43 @@ app.post("/api/chat", (req, res) => {
     });
   }
 
-  return res.status(503).json({
-    success: false,
-    aiConnected: false,
-    error: "AI_NOT_CONFIGURED",
-    message: "The VELNORA AI engine has not been configured yet."
-  });
+  const apiKey = process.env.OPENAI_API_KEY;
+
+  if (!apiKey) {
+    return res.status(503).json({
+      success: false,
+      error: "AI_NOT_CONFIGURED",
+      message: "The AI service has not been configured yet."
+    });
+  }
+
+  try {
+    const openai = new OpenAI({ apiKey });
+
+    const response = await openai.responses.create({
+      model: process.env.OPENAI_MODEL || "gpt-5-mini",
+      instructions:
+        "You are VELNORA AI, a professional multilingual business assistant. Be accurate, helpful, and clear. Never claim to have performed actions you did not perform.",
+      input: message.trim(),
+      max_output_tokens: 800
+    });
+
+    return res.json({
+      success: true,
+      reply: response.output_text
+    });
+  } catch (error) {
+    console.error("AI request failed:", error.message);
+
+    return res.status(502).json({
+      success: false,
+      error: "AI_REQUEST_FAILED",
+      message: "The AI service could not complete the request."
+    });
+  }
 });
 
-// Unknown API endpoints
+// Unknown API routes
 app.use("/api", (req, res) => {
   res.status(404).json({
     success: false,
@@ -66,35 +95,27 @@ app.use("/api", (req, res) => {
   });
 });
 
-// Error handler
+// General error handler
 app.use((err, req, res, next) => {
-  console.error("Request error:", err.message);
+  console.error("Server request error:", err.message);
 
   if (res.headersSent) {
     return next(err);
   }
 
-  const status =
-    Number.isInteger(err.status) && err.status >= 400 && err.status < 600
-      ? err.status
-      : 500;
-
-  res.status(status).json({
+  res.status(500).json({
     success: false,
-    error:
-      status === 500
-        ? "An internal server error occurred."
-        : err.message
+    error: "An internal server error occurred."
   });
 });
 
 // Start server
 const server = app.listen(PORT, HOST, () => {
-  console.log(`VELNORA server listening on port ${PORT}`);
+  console.log(`VELNORA is running on port ${PORT}`);
 });
 
-server.on("error", (err) => {
-  console.error("Server startup error:", err);
+server.on("error", (error) => {
+  console.error("Startup error:", error.message);
   process.exitCode = 1;
 });
 
