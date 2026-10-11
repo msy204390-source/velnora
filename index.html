@@ -1,602 +1,1201 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#080b14">
-  <title>VELNORA | AI Workspace</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#070b16">
+<meta name="color-scheme" content="dark">
+<title>VELNORA — مساحة عمل ذكية</title>
 
-  <style>
-    * { box-sizing: border-box; }
+<style>
+:root {
+  --bg:#070b16;
+  --panel:#0d1426;
+  --panel2:#111c32;
+  --border:#202e4d;
+  --text:#f2f5ff;
+  --muted:#96a5c5;
+  --purple:#8b68ff;
+  --blue:#386bff;
+  --cyan:#4ce0d0;
+  --danger:#ff8888;
+  --radius:18px;
+}
 
-    :root {
-      --bg: #080b14;
-      --panel: #101625;
-      --panel2: #151d30;
-      --border: #263149;
-      --text: #f2f5ff;
-      --muted: #98a4bd;
-      --accent: #9b7cff;
-      --accent2: #57d9c5;
-      --danger: #ff8080;
-    }
+* { box-sizing:border-box; }
 
-    body {
-      margin: 0;
-      min-height: 100vh;
-      background:
-        radial-gradient(ellipse at top, #17203a 0%, transparent 55%),
-        var(--bg);
-      color: var(--text);
-      font-family: system-ui, -apple-system, sans-serif;
-    }
+html,body {
+  margin:0;
+  min-height:100%;
+  background:var(--bg);
+  color:var(--text);
+  font-family:system-ui,-apple-system,"Segoe UI",sans-serif;
+}
 
-    button, textarea, select { font: inherit; }
-    button { cursor: pointer; }
+body { min-height:100dvh; }
 
-    .app {
-      max-width: 1000px;
-      min-height: 100vh;
-      margin: auto;
-      padding: 18px;
-      display: flex;
-      flex-direction: column;
-    }
+button,textarea { font:inherit; }
+button { cursor:pointer; }
+button:focus-visible,textarea:focus-visible {
+  outline:2px solid var(--cyan);
+  outline-offset:3px;
+}
 
-    header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 10px 0 22px;
-      border-bottom: 1px solid var(--border);
-    }
+button:disabled { opacity:.55;cursor:not-allowed; }
 
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
+.app {
+  min-height:100dvh;
+  display:grid;
+  grid-template-columns:240px minmax(0,1fr);
+  max-width:1800px;
+  margin:auto;
+}
 
-    .logo {
-      width: 44px;
-      height: 44px;
-      border-radius: 15px;
-      display: grid;
-      place-items: center;
-      font-size: 23px;
-      font-weight: 800;
-      color: white;
-      background: linear-gradient(135deg, #8d6bff, #43d8c2);
-    }
+.sidebar {
+  background:#080d1b;
+  border-inline-end:1px solid var(--border);
+  padding:22px 15px;
+  display:flex;
+  flex-direction:column;
+  gap:22px;
+}
 
-    h1 {
-      font-size: 22px;
-      margin: 0;
-      letter-spacing: 2px;
-    }
+.brand {
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:4px 8px 18px;
+}
 
-    .subtitle {
-      color: var(--muted);
-      font-size: 12px;
-      margin-top: 3px;
-    }
+.logo {
+  width:43px;
+  height:43px;
+  flex-shrink:0;
+  display:grid;
+  place-items:center;
+  border-radius:14px;
+  font-size:27px;
+  font-weight:900;
+  color:white;
+  background:linear-gradient(140deg,var(--blue),var(--purple));
+  box-shadow:0 0 28px #664cff35;
+}
 
-    .lang {
-      background: var(--panel2);
-      border: 1px solid var(--border);
-      color: white;
-      padding: 9px 12px;
-      border-radius: 11px;
-    }
+.brand-name {
+  font-size:21px;
+  font-weight:800;
+  letter-spacing:1px;
+}
 
-    .hero { padding: 26px 0 18px; }
+.brand-sub {
+  margin-top:3px;
+  color:var(--muted);
+  font-size:12px;
+}
 
-    .badge {
-      display: inline-block;
-      padding: 6px 10px;
-      border-radius: 20px;
-      color: var(--accent2);
-      background: #12302f;
-      font-size: 12px;
-    }
+.nav {
+  display:grid;
+  gap:8px;
+}
 
-    h2 {
-      font-size: clamp(25px, 6vw, 38px);
-      line-height: 1.35;
-      margin: 14px 0 8px;
-    }
+.nav button {
+  width:100%;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:13px 12px;
+  text-align:start;
+  border:1px solid transparent;
+  border-radius:12px;
+  background:transparent;
+  color:#b8c4e2;
+}
 
-    .description {
-      color: var(--muted);
-      line-height: 1.8;
-      margin: 0;
-      font-size: 14px;
-    }
+.nav button.active,
+.nav button:hover {
+  background:linear-gradient(100deg,#4030788c,#182649);
+  border-color:#5744a855;
+  color:white;
+}
 
-    .workspace {
-      display: flex;
-      flex-direction: column;
-      flex: 1;
-      min-height: 440px;
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      background: rgba(16, 22, 37, .94);
-      overflow: hidden;
-    }
+.nav-icon {
+  width:24px;
+  text-align:center;
+  font-size:19px;
+}
 
-    .workspace-head {
-      padding: 14px 16px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-    }
+.sidebar-bottom {
+  margin-top:auto;
+  display:grid;
+  gap:15px;
+}
 
-    .online {
-      font-size: 12px;
-      color: var(--accent2);
-    }
+.device-card {
+  padding:15px;
+  border:1px solid #293b69;
+  border-radius:15px;
+  background:linear-gradient(145deg,#101b37,#0b1020);
+}
 
-    .clear {
-      border: 1px solid var(--border);
-      color: var(--muted);
-      background: transparent;
-      border-radius: 9px;
-      padding: 7px 10px;
-    }
+.device-card strong { font-size:13px; }
 
-    #messages {
-      flex: 1;
-      min-height: 260px;
-      max-height: 52vh;
-      overflow-y: auto;
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-    }
+.device-card p {
+  margin:8px 0 0;
+  font-size:12px;
+  color:var(--muted);
+  line-height:1.8;
+}
 
-    .message {
-      max-width: 90%;
-      padding: 12px 14px;
-      border-radius: 15px;
-      white-space: pre-wrap;
-      overflow-wrap: anywhere;
-      line-height: 1.75;
-      font-size: 14px;
-    }
+.connection {
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:12px;
+  color:var(--cyan);
+}
 
-    .bot {
-      align-self: flex-start;
-      background: var(--panel2);
-      border: 1px solid var(--border);
-    }
+.dot {
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:var(--cyan);
+  display:inline-block;
+}
 
-    .user {
-      align-self: flex-end;
-      background: #45366e;
-      border: 1px solid #66539c;
-    }
+.main {
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+}
 
-    .composer {
-      padding: 12px;
-      border-top: 1px solid var(--border);
-    }
+.topbar {
+  height:76px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:12px 24px;
+  border-bottom:1px solid var(--border);
+  background:#090f1de8;
+  position:sticky;
+  top:0;
+  z-index:5;
+  backdrop-filter:blur(14px);
+}
 
-    textarea {
-      display: block;
-      width: 100%;
-      min-height: 85px;
-      resize: vertical;
-      border: 1px solid var(--border);
-      border-radius: 13px;
-      padding: 12px;
-      background: #0a0f1c;
-      color: white;
-      outline: none;
-    }
+.top-left,.top-right {
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
 
-    textarea:focus { border-color: var(--accent); }
+.icon-btn {
+  width:42px;
+  height:42px;
+  display:grid;
+  place-items:center;
+  border:1px solid var(--border);
+  border-radius:12px;
+  background:var(--panel);
+  color:var(--text);
+  font-size:18px;
+}
 
-    .actions {
-      display: flex;
-      gap: 10px;
-      margin-top: 10px;
-    }
+.lang-btn {
+  padding:10px 14px;
+  border:1px solid var(--border);
+  border-radius:12px;
+  background:var(--panel);
+  color:var(--text);
+}
 
-    .send {
-      flex: 1;
-      border: 0;
-      border-radius: 12px;
-      padding: 12px;
-      color: #fff;
-      font-weight: 700;
-      background: linear-gradient(110deg, #8968f8, #6750d9);
-    }
+.avatar {
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:#1a2851;
+  color:#d8d0ff;
+  font-weight:800;
+}
 
-    .send:disabled {
-      opacity: .5;
-      cursor: not-allowed;
-    }
+.content {
+  width:100%;
+  max-width:1450px;
+  margin:0 auto;
+  padding:25px;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 245px;
+  gap:20px;
+  flex:1;
+}
 
-    .load {
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 12px;
-      color: var(--text);
-      background: var(--panel2);
-    }
+.center {
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  gap:18px;
+}
 
-    .status {
-      color: var(--muted);
-      font-size: 12px;
-      line-height: 1.8;
-      margin-top: 12px;
-      overflow-wrap: anywhere;
-    }
+.hero {
+  position:relative;
+  overflow:hidden;
+  text-align:center;
+  padding:28px 15px 25px;
+  border:1px solid #202f58;
+  border-radius:20px;
+  background:
+    radial-gradient(ellipse at 50% 0%,#303c9d54,transparent 70%),
+    linear-gradient(145deg,#0e1730,#080e1c);
+}
 
-    .status.error { color: var(--danger); }
-    .status.success { color: var(--accent2); }
+.hero:after {
+  content:"";
+  position:absolute;
+  left:-10%;
+  right:-10%;
+  bottom:-70px;
+  height:110px;
+  border-top:2px solid #7657ff70;
+  border-radius:50%;
+  transform:rotate(-5deg);
+  pointer-events:none;
+}
 
-    .progress {
-      height: 5px;
-      border-radius: 5px;
-      background: #222c42;
-      margin-top: 8px;
-      overflow: hidden;
-    }
+.hero h1 {
+  font-size:clamp(25px,4vw,36px);
+  line-height:1.4;
+  margin:0 0 10px;
+}
 
-    #bar {
-      height: 100%;
-      width: 0%;
-      background: linear-gradient(90deg, #9876ff, #57d9c5);
-      transition: width .2s;
-    }
+.hero p {
+  color:#bac7e8;
+  line-height:1.8;
+  margin:0;
+  font-size:14px;
+}
 
-    footer {
-      color: var(--muted);
-      font-size: 12px;
-      text-align: center;
-      padding: 22px 0 10px;
-    }
+.pill {
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  border:1px solid #168f8c;
+  background:#062d32a8;
+  color:var(--cyan);
+  padding:8px 14px;
+  border-radius:30px;
+  margin-top:18px;
+  font-size:12px;
+}
 
-    @media (max-width: 480px) {
-      .app { padding: 13px; }
-      .hero { padding-top: 21px; }
-      .workspace { min-height: 420px; }
-      .message { max-width: 96%; }
-    }
-  </style>
+.chat {
+  min-height:480px;
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  border:1px solid var(--border);
+  border-radius:20px;
+  background:linear-gradient(145deg,#0d162a,#080e1c);
+  overflow:hidden;
+}
+
+.chat-head {
+  padding:15px 17px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  border-bottom:1px solid var(--border);
+}
+
+.assistant-id {
+  display:flex;
+  align-items:center;
+  gap:12px;
+  min-width:0;
+}
+
+.assistant-icon {
+  width:45px;
+  height:45px;
+  border-radius:15px;
+  display:grid;
+  place-items:center;
+  flex-shrink:0;
+  font-size:22px;
+  background:linear-gradient(145deg,#5137c7,#214db4);
+}
+
+.assistant-title { font-weight:750; }
+.assistant-model {
+  color:var(--muted);
+  font-size:12px;
+  margin-top:4px;
+}
+
+.head-actions {
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.new-chat {
+  background:#11182e;
+  color:#e8e3ff;
+  border:1px solid #7757ff;
+  border-radius:11px;
+  padding:10px 12px;
+  white-space:nowrap;
+}
+
+.messages {
+  flex:1;
+  min-height:270px;
+  max-height:55vh;
+  overflow-y:auto;
+  padding:20px;
+  display:flex;
+  flex-direction:column;
+  gap:18px;
+  overscroll-behavior:contain;
+}
+
+.msg-row {
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
+  max-width:100%;
+}
+
+.msg-row.user-row { justify-content:flex-start; }
+
+.msg-avatar {
+  width:35px;
+  height:35px;
+  flex-shrink:0;
+  display:grid;
+  place-items:center;
+  border-radius:12px;
+  background:#25265b;
+  color:white;
+}
+
+.bubble {
+  max-width:min(88%,650px);
+  padding:13px 15px;
+  border:1px solid #25375c;
+  border-radius:16px;
+  background:#101d37;
+  line-height:1.85;
+  font-size:14px;
+  overflow-wrap:anywhere;
+  white-space:pre-wrap;
+}
+
+.user-row .bubble {
+  background:#302657;
+  border-color:#5d4c9c;
+}
+
+.msg-time {
+  display:block;
+  margin-top:6px;
+  color:#92a2c6;
+  font-size:10px;
+}
+
+.composer {
+  border-top:1px solid var(--border);
+  padding:14px;
+  background:#0a1020;
+}
+
+.input-wrap {
+  border:1px solid #5844b6;
+  border-radius:16px;
+  padding:10px;
+  background:#080e1b;
+}
+
+textarea {
+  width:100%;
+  min-height:75px;
+  max-height:200px;
+  resize:vertical;
+  border:0;
+  outline:none;
+  color:white;
+  background:transparent;
+  padding:9px;
+  line-height:1.7;
+}
+
+textarea::placeholder { color:#8999bd; }
+
+.composer-bottom {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding-top:8px;
+}
+
+.input-tools {
+  display:flex;
+  gap:7px;
+}
+
+.tool-btn {
+  width:37px;
+  height:37px;
+  border:0;
+  border-radius:10px;
+  background:transparent;
+  color:#c6d4f4;
+  font-size:19px;
+}
+
+.send-btn {
+  min-width:98px;
+  border:0;
+  border-radius:11px;
+  padding:11px 15px;
+  color:white;
+  background:linear-gradient(110deg,#8058ff,#4d63ee);
+  font-weight:700;
+}
+
+.status {
+  margin:11px 4px 0;
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.7;
+  overflow-wrap:anywhere;
+}
+
+.status.error { color:var(--danger); }
+.status.good { color:var(--cyan); }
+
+.progress {
+  height:4px;
+  margin-top:8px;
+  border-radius:4px;
+  background:#1c2942;
+  overflow:hidden;
+}
+
+.progress-bar {
+  width:0;
+  height:100%;
+  background:linear-gradient(90deg,var(--purple),var(--cyan));
+  transition:width .2s;
+}
+
+.right-panel {
+  display:flex;
+  flex-direction:column;
+  gap:15px;
+}
+
+.info-card {
+  padding:18px;
+  border:1px solid var(--border);
+  border-radius:17px;
+  background:linear-gradient(145deg,#0e172a,#080f1e);
+}
+
+.info-card h3 {
+  margin:0 0 15px;
+  font-size:15px;
+}
+
+.info-list {
+  display:grid;
+  gap:13px;
+  color:#bac8e6;
+  font-size:12px;
+  line-height:1.7;
+}
+
+.info-list div {
+  display:flex;
+  align-items:flex-start;
+  gap:8px;
+}
+
+.check { color:var(--cyan); }
+
+.model-line {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-size:12px;
+  line-height:1.7;
+}
+
+.model-badge {
+  width:40px;
+  height:40px;
+  flex-shrink:0;
+  display:grid;
+  place-items:center;
+  border-radius:50%;
+  background:#1a2855;
+  font-size:19px;
+}
+
+.model-status {
+  margin-top:10px;
+  color:var(--cyan);
+  font-size:12px;
+}
+
+.tip {
+  color:#bdc9e5;
+  font-size:12px;
+  line-height:1.9;
+}
+
+.footer {
+  padding:17px;
+  text-align:center;
+  color:#8291b5;
+  font-size:11px;
+  border-top:1px solid #172440;
+}
+
+.mobile-only { display:none; }
+
+@media (min-width:1300px) {
+  .content { padding:30px; }
+  .messages { max-height:60vh; }
+}
+
+@media (max-width:1050px) {
+  .content { grid-template-columns:minmax(0,1fr); }
+  .right-panel { display:grid;grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .right-panel .info-card:first-child { grid-column:1/-1; }
+}
+
+@media (max-width:700px) {
+  .app { display:block; }
+  .sidebar { display:none; }
+  .topbar {
+    height:64px;
+    padding:9px 12px;
+  }
+  .mobile-only { display:grid; }
+  .content { padding:13px;gap:13px; }
+  .hero { padding:24px 12px; }
+  .hero h1 { font-size:25px; }
+  .hero p { font-size:13px; }
+  .right-panel { display:grid;grid-template-columns:1fr; }
+  .right-panel .info-card:first-child { grid-column:auto; }
+  .info-card { padding:15px; }
+  .chat { min-height:480px;border-radius:16px; }
+  .chat-head { padding:12px; }
+  .assistant-icon { width:39px;height:39px; }
+  .new-chat { padding:9px;font-size:12px; }
+  .messages { padding:13px;max-height:none;min-height:280px; }
+  .bubble { max-width:calc(100% - 4px);font-size:13px; }
+  .composer { padding:10px; }
+  textarea { min-height:68px;font-size:16px; }
+  .send-btn { min-width:83px;padding:10px; }
+  .lang-btn { padding:9px 10px;font-size:12px; }
+  .top-right { gap:6px; }
+  .avatar { width:35px;height:35px; }
+}
+
+@media (max-width:360px) {
+  .content { padding:8px; }
+  .topbar { padding:8px; }
+  .brand-name { font-size:18px; }
+  .head-actions { gap:4px; }
+  .new-chat { font-size:11px; }
+  .chat-head { gap:6px; }
+  .assistant-model { font-size:10px; }
+}
+</style>
 </head>
 
 <body>
-  <div class="app">
-    <header>
-      <div class="brand">
-        <div class="logo">V</div>
-        <div>
-          <h1>VELNORA</h1>
-          <div class="subtitle" id="brandSubtitle">AI WORKSPACE</div>
+<div class="app">
+
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo">V</div>
+      <div>
+        <div class="brand-name">VELNORA</div>
+        <div class="brand-sub" data-i18n="tagline">مساحة عمل ذكية</div>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <button class="active" id="navChat">
+        <span class="nav-icon">▤</span>
+        <span data-i18n="chat">المحادثة</span>
+      </button>
+      <button id="navHistory">
+        <span class="nav-icon">◷</span>
+        <span data-i18n="history">المحادثات السابقة</span>
+      </button>
+      <button id="navModel">
+        <span class="nav-icon">◇</span>
+        <span data-i18n="model">النموذج</span>
+      </button>
+      <button id="navSettings">
+        <span class="nav-icon">⚙</span>
+        <span data-i18n="settings">الإعدادات</span>
+      </button>
+    </nav>
+
+    <div class="sidebar-bottom">
+      <div class="device-card">
+        <strong data-i18n="mobileTitle">📱 تجربة مناسبة لهاتفك</strong>
+        <p data-i18n="mobileText">واجهة مرنة مصممة لتناسب مختلف أحجام الشاشات.</p>
+      </div>
+      <div class="connection">
+        <span class="dot"></span>
+        <span data-i18n="online">الخدمة متاحة</span>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div class="top-left">
+        <button class="icon-btn mobile-only" id="menuBtn" aria-label="القائمة">☰</button>
+        <div class="brand mobile-only">
+          <div class="logo">V</div>
+          <div>
+            <div class="brand-name">VELNORA</div>
+            <div class="brand-sub" data-i18n="tagline">مساحة عمل ذكية</div>
+          </div>
         </div>
       </div>
 
-      <button class="lang" id="langBtn" type="button">English</button>
+      <div class="top-right">
+        <button class="lang-btn" id="langBtn">English</button>
+        <button class="icon-btn" id="themeBtn" aria-label="المظهر">☾</button>
+        <div class="avatar">V</div>
+      </div>
     </header>
 
-    <section class="hero">
-      <span class="badge" id="badge">ذكاء اصطناعي محلي</span>
-      <h2 id="headline">مساحة ذكية لأفكارك</h2>
-      <p class="description" id="description">
-        تحدث مع مساعدك الذكي مباشرة من المتصفح.
-        لا تحتاج إلى مفتاح API مدفوع.
-      </p>
-    </section>
-
-    <main class="workspace">
-      <div class="workspace-head">
-        <div>
-          <strong id="chatTitle">المساعد الذكي</strong>
-          <div class="subtitle" id="modelName">Qwen 2.5 · 0.5B</div>
+    <div class="content">
+      <section class="center">
+        <div class="hero">
+          <h1 data-i18n="headline">مساحة ذكية لأفكارك</h1>
+          <p data-i18n="heroText">تحدث مع مساعدك الذكي وابدأ بتحويل أفكارك إلى خطوات عملية.</p>
+          <div class="pill">
+            <span class="dot"></span>
+            <span data-i18n="localAI">مساعدك الذكي</span>
+          </div>
         </div>
 
-        <button class="clear" id="clearBtn" type="button">
-          محادثة جديدة
-        </button>
-      </div>
+        <section class="chat">
+          <div class="chat-head">
+            <div class="assistant-id">
+              <div class="assistant-icon">✧</div>
+              <div>
+                <div class="assistant-title" data-i18n="assistant">المساعد الذكي</div>
+                <div class="assistant-model">Qwen 2.5 · 0.5B</div>
+              </div>
+            </div>
 
-      <div id="messages" aria-live="polite">
-        <div class="message bot" id="welcome">
-          أهلاً بك في VELNORA! حمّل النموذج أولاً، ثم اكتب رسالتك.
+            <div class="head-actions">
+              <button class="new-chat" id="newChatBtn">＋ <span data-i18n="newChat">محادثة جديدة</span></button>
+              <button class="icon-btn" id="loadBtn" title="تشغيل النموذج">▶</button>
+            </div>
+          </div>
+
+          <div class="messages" id="messages" aria-live="polite">
+            <div class="msg-row">
+              <div class="msg-avatar">✧</div>
+              <div class="bubble">
+                <span data-i18n="welcome">أهلاً بك في VELNORA! أنا مساعدك الذكي. يمكنك طرح أسئلتك أو طلب المساعدة في أفكارك ومشاريعك.</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="composer">
+            <div class="input-wrap">
+              <textarea id="prompt" maxlength="4000" data-placeholder="placeholder" placeholder="اكتب رسالتك هنا..." aria-label="رسالتك"></textarea>
+              <div class="composer-bottom">
+                <div class="input-tools">
+                  <button class="tool-btn" id="emojiBtn" title="Emoji">☺</button>
+                </div>
+                <button class="send-btn" id="sendBtn" disabled>➤ <span data-i18n="send">إرسال</span></button>
+              </div>
+            </div>
+
+            <div class="status" id="status" data-i18n="notLoaded">النموذج غير محمّل حالياً.</div>
+            <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+          </div>
+        </section>
+      </section>
+
+      <aside class="right-panel">
+        <div class="info-card">
+          <h3 data-i18n="whyTitle">✦ لماذا VELNORA؟</h3>
+          <div class="info-list">
+            <div><span class="check">✓</span><span data-i18n="feature1">واجهة سهلة وواضحة</span></div>
+            <div><span class="check">✓</span><span data-i18n="feature2">تصميم متوافق مع الهواتف</span></div>
+            <div><span class="check">✓</span><span data-i18n="feature3">دعم العربية والإنجليزية</span></div>
+            <div><span class="check">✓</span><span data-i18n="feature4">إمكانية المحادثة بعد تشغيل النموذج</span></div>
+            <div><span class="check">✓</span><span data-i18n="feature5">لا يطلب الوصول إلى ألبوم الصور</span></div>
+          </div>
         </div>
-      </div>
 
-      <div class="composer">
-        <textarea
-          id="prompt"
-          maxlength="4000"
-          placeholder="اكتب رسالتك هنا..."
-          aria-label="رسالتك"
-        ></textarea>
-
-        <div class="actions">
-          <button class="send" id="sendBtn" type="button" disabled>
-            إرسال
-          </button>
-
-          <button class="load" id="loadBtn" type="button">
-            تحميل الذكاء الاصطناعي
-          </button>
+        <div class="info-card">
+          <h3 data-i18n="userTitle">المستخدم الحالي</h3>
+          <div class="model-line">
+            <div class="model-badge">V</div>
+            <div>
+              <strong data-i18n="guest">مستخدم ضيف</strong>
+              <div class="brand-sub" data-i18n="guestText">مرحباً بك في مساحة عملك.</div>
+            </div>
+          </div>
         </div>
 
-        <div class="status" id="status">
-          لم يتم تحميل النموذج بعد.
+        <div class="info-card" id="modelCard">
+          <h3 data-i18n="modelTitle">النموذج الحالي</h3>
+          <div class="model-line">
+            <div class="model-badge">✧</div>
+            <div>
+              <strong>Qwen 2.5 · 0.5B</strong>
+              <div class="model-status" id="modelStatus" data-i18n="modelWaiting">بانتظار التشغيل</div>
+            </div>
+          </div>
         </div>
 
-        <div class="progress">
-          <div id="bar"></div>
+        <div class="info-card">
+          <h3 data-i18n="tipTitle">💡 نصيحة</h3>
+          <div class="tip" data-i18n="tipText">تأكد من اتصال الإنترنت عند تنزيل النموذج لأول مرة، واترك الصفحة مفتوحة حتى يكتمل التجهيز.</div>
         </div>
-      </div>
-    </main>
+      </aside>
+    </div>
 
-    <footer id="footer">
-      VELNORA · يعمل النموذج على جهازك بعد تنزيله.
-    </footer>
-  </div>
+    <footer class="footer" data-i18n="footer">VELNORA · مساحة ذكية لأفكارك</footer>
+  </main>
+</div>
 
-  <script type="module">
-    const $ = (id) => document.getElementById(id);
+<script type="module">
+const $ = id => document.getElementById(id);
 
-    let language = "ar";
-    let engine = null;
-    let loadingPromise = null;
-    let busy = false;
-    let webllm = null;
-    let history = [];
+let lang = "ar";
+let engine = null;
+let webllm = null;
+let loadingPromise = null;
+let busy = false;
+let history = [];
+let savedChats = [];
+let dark = true;
 
-    const model = "Qwen2.5-0.5B-Instruct-q4f16_1-MLC";
+const MODEL = "Qwen2.5-0.5B-Instruct-q4f16_1-MLC";
 
-    const text = {
-      ar: {
-        subtitle: "مساحة عمل ذكية",
-        badge: "ذكاء اصطناعي محلي",
-        headline: "مساحة ذكية لأفكارك",
-        description: "تحدث مع مساعدك الذكي مباشرة من المتصفح. لا تحتاج إلى مفتاح API مدفوع.",
-        chat: "المساعد الذكي",
-        clear: "محادثة جديدة",
-        welcome: "أهلاً بك في VELNORA! حمّل النموذج أولاً، ثم اكتب رسالتك.",
-        placeholder: "اكتب رسالتك هنا...",
-        send: "إرسال",
-        load: "تحميل الذكاء الاصطناعي",
-        loading: "جارٍ تجهيز الذكاء الاصطناعي...",
-        notLoaded: "لم يتم تحميل النموذج بعد.",
-        ready: "الذكاء الاصطناعي جاهز! يمكنك بدء المحادثة.",
-        needModel: "حمّل النموذج أولاً قبل إرسال الرسائل.",
-        empty: "اكتب رسالة أولاً.",
-        unsupported: "المتصفح أو الجهاز لا يدعم WebGPU. جرّب متصفحاً وجهازاً متوافقين.",
-        failed: "تعذّر تشغيل الذكاء الاصطناعي: ",
-        thinking: "يفكر...",
-        error: "حدث خطأ: ",
-        footer: "VELNORA · يعمل النموذج على جهازك بعد تنزيله.",
-        loadingLibrary: "جارٍ تحميل مكتبة الذكاء الاصطناعي...",
-        downloading: "جارٍ تنزيل النموذج وتجهيزه..."
-      },
-      en: {
-        subtitle: "SMART WORKSPACE",
-        badge: "LOCAL AI",
-        headline: "A smarter space for your ideas",
-        description: "Chat with your AI assistant directly in your browser. No paid API key required.",
-        chat: "AI Assistant",
-        clear: "New chat",
-        welcome: "Welcome to VELNORA! Load the model first, then send a message.",
-        placeholder: "Type your message here...",
-        send: "Send",
-        load: "Load AI",
-        loading: "Preparing AI...",
-        notLoaded: "The model has not been loaded yet.",
-        ready: "AI is ready! Start chatting.",
-        needModel: "Load the model before sending messages.",
-        empty: "Please enter a message first.",
-        unsupported: "This browser or device does not support WebGPU. Try a compatible browser and device.",
-        failed: "Could not start AI: ",
-        thinking: "Thinking...",
-        error: "An error occurred: ",
-        footer: "VELNORA · The model runs on your device after downloading.",
-        loadingLibrary: "Loading AI library...",
-        downloading: "Downloading and preparing the model..."
-      }
-    };
+const translations = {
+ ar: {
+  tagline:"مساحة عمل ذكية",
+  chat:"المحادثة",
+  history:"المحادثات السابقة",
+  model:"النموذج",
+  settings:"الإعدادات",
+  mobileTitle:"📱 تجربة مناسبة لهاتفك",
+  mobileText:"واجهة مرنة مصممة لتناسب مختلف أحجام الشاشات.",
+  online:"الخدمة متاحة",
+  headline:"مساحة ذكية لأفكارك",
+  heroText:"تحدث مع مساعدك الذكي وابدأ بتحويل أفكارك إلى خطوات عملية.",
+  localAI:"مساعدك الذكي",
+  assistant:"المساعد الذكي",
+  newChat:"محادثة جديدة",
+  welcome:"أهلاً بك في VELNORA! أنا مساعدك الذكي. يمكنك طرح أسئلتك أو طلب المساعدة في أفكارك ومشاريعك.",
+  placeholder:"اكتب رسالتك هنا...",
+  send:"إرسال",
+  notLoaded:"النموذج غير محمّل حالياً. اضغط ▶ لتشغيله.",
+  whyTitle:"✦ لماذا VELNORA؟",
+  feature1:"واجهة سهلة وواضحة",
+  feature2:"تصميم متوافق مع الهواتف",
+  feature3:"دعم العربية والإنجليزية",
+  feature4:"إمكانية المحادثة بعد تشغيل النموذج",
+  feature5:"لا يطلب الوصول إلى ألبوم الصور",
+  userTitle:"المستخدم الحالي",
+  guest:"مستخدم ضيف",
+  guestText:"مرحباً بك في مساحة عملك.",
+  modelTitle:"النموذج الحالي",
+  modelWaiting:"بانتظار التشغيل",
+  tipTitle:"💡 نصيحة",
+  tipText:"تأكد من اتصال الإنترنت عند تنزيل النموذج لأول مرة، واترك الصفحة مفتوحة حتى يكتمل التجهيز.",
+  footer:"VELNORA · مساحة ذكية لأفكارك",
+  loadingLibrary:"جارٍ تحميل مكتبة الذكاء الاصطناعي...",
+  loadingModel:"جارٍ تنزيل النموذج وتجهيزه...",
+  load:"تشغيل النموذج",
+  ready:"النموذج جاهز. يمكنك بدء المحادثة.",
+  unsupported:"هذا الجهاز أو المتصفح لا يدعم WebGPU لتشغيل النموذج المحلي.",
+  failed:"تعذّر تشغيل النموذج: ",
+  empty:"اكتب رسالة أولاً.",
+  needModel:"شغّل النموذج أولاً بالضغط على زر ▶.",
+  thinking:"جارٍ التفكير...",
+  error:"حدث خطأ: ",
+  newStarted:"بدأت محادثة جديدة.",
+  noHistory:"لا توجد محادثات محفوظة في هذه الجلسة.",
+  historyTitle:"المحادثات السابقة",
+  settingsTitle:"الإعدادات",
+  settingsText:"اختر اللغة من الزر أعلى الصفحة. يمكنك بدء محادثة جديدة من زر «محادثة جديدة».",
+  modelText:"النموذج المحلي: Qwen 2.5 · 0.5B",
+  saved:"تم حفظ المحادثة في سجل الجلسة.",
+  light:"المظهر الفاتح",
+  dark:"المظهر الداكن",
+  emoji:"مرحباً 😊",
+  menu:"القائمة"
+ },
+ en: {
+  tagline:"Smart workspace",
+  chat:"Chat",
+  history:"Previous chats",
+  model:"Model",
+  settings:"Settings",
+  mobileTitle:"📱 Designed for your phone",
+  mobileText:"A responsive interface for different screen sizes.",
+  online:"Service available",
+  headline:"A smarter space for your ideas",
+  heroText:"Talk with your AI assistant and turn your ideas into practical steps.",
+  localAI:"Your AI assistant",
+  assistant:"AI Assistant",
+  newChat:"New chat",
+  welcome:"Welcome to VELNORA! I'm your AI assistant. Ask questions or get help with your ideas and projects.",
+  placeholder:"Type your message here...",
+  send:"Send",
+  notLoaded:"The model is not loaded. Press ▶ to start it.",
+  whyTitle:"✦ Why VELNORA?",
+  feature1:"Simple, clear interface",
+  feature2:"Responsive mobile design",
+  feature3:"Arabic and English support",
+  feature4:"Chat after starting the model",
+  feature5:"No photo album access requested",
+  userTitle:"Current user",
+  guest:"Guest user",
+  guestText:"Welcome to your workspace.",
+  modelTitle:"Current model",
+  modelWaiting:"Waiting to start",
+  tipTitle:"💡 Tip",
+  tipText:"Keep an internet connection while downloading the model for the first time. Leave this page open until setup finishes.",
+  footer:"VELNORA · A smarter space for your ideas",
+  loadingLibrary:"Loading AI library...",
+  loadingModel:"Downloading and preparing model...",
+  load:"Start model",
+  ready:"Model ready. You can start chatting.",
+  unsupported:"This device or browser does not support WebGPU for local model inference.",
+  failed:"Could not start model: ",
+  empty:"Please type a message first.",
+  needModel:"Start the model first by pressing ▶.",
+  thinking:"Thinking...",
+  error:"An error occurred: ",
+  newStarted:"A new chat has started.",
+  noHistory:"No saved conversations in this session.",
+  historyTitle:"Previous chats",
+  settingsTitle:"Settings",
+  settingsText:"Choose your language using the button above. Start a new chat using the New Chat button.",
+  modelText:"Local model: Qwen 2.5 · 0.5B",
+  saved:"Conversation saved in this session's history.",
+  light:"Light appearance",
+  dark:"Dark appearance",
+  emoji:"Hello 😊",
+  menu:"Menu"
+ }
+};
 
-    function tr(key) {
-      return text[language][key] || key;
-    }
+function t(key) {
+ return translations[lang][key] || key;
+}
 
-    function setStatus(message, kind = "") {
-      $("status").textContent = message;
-      $("status").className = "status " + kind;
-    }
+function status(message, kind="") {
+ $("status").textContent = message;
+ $("status").className = "status " + kind;
+}
 
-    function addMessage(content, type = "bot") {
-      const element = document.createElement("div");
-      element.className = "message " + type;
-      element.textContent = content;
-      $("messages").appendChild(element);
-      $("messages").scrollTop = $("messages").scrollHeight;
-      return element;
-    }
+function updateLanguage() {
+ const dict = translations[lang];
+ document.documentElement.lang = lang;
+ document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
 
-    function updateLanguage() {
-      const t = text[language];
-      document.documentElement.lang = language;
-      document.documentElement.dir = language === "ar" ? "rtl" : "ltr";
+ document.querySelectorAll("[data-i18n]").forEach(el => {
+  const key = el.getAttribute("data-i18n");
+  if (dict[key]) el.textContent = dict[key];
+ });
 
-      $("brandSubtitle").textContent = t.subtitle;
-      $("badge").textContent = t.badge;
-      $("headline").textContent = t.headline;
-      $("description").textContent = t.description;
-      $("chatTitle").textContent = t.chat;
-      $("clearBtn").textContent = t.clear;
-      $("prompt").placeholder = t.placeholder;
-      $("sendBtn").textContent = t.send;
-      $("loadBtn").textContent = engine ? t.ready : t.load;
-      $("footer").textContent = t.footer;
-      $("langBtn").textContent = language === "ar" ? "English" : "العربية";
+ $("prompt").placeholder = dict.placeholder;
+ $("langBtn").textContent = lang === "ar" ? "English" : "العربية";
+ $("loadBtn").title = dict.load;
 
-      $("welcome").textContent = t.welcome;
+ if (!engine && !loadingPromise) status(t("notLoaded"));
+}
 
-      if (!engine && !loadingPromise) {
-        setStatus(t.notLoaded);
-      }
-    }
+function addMessage(content, who="assistant", save=true) {
+ const row = document.createElement("div");
+ row.className = "msg-row" + (who === "user" ? " user-row" : "");
 
-    $("langBtn").addEventListener("click", () => {
-      language = language === "ar" ? "en" : "ar";
-      updateLanguage();
-    });
+ if (who !== "user") {
+  const icon = document.createElement("div");
+  icon.className = "msg-avatar";
+  icon.textContent = "✧";
+  row.appendChild(icon);
+ }
 
-    $("clearBtn").addEventListener("click", () => {
-      history = [];
-      $("messages").replaceChildren();
+ const bubble = document.createElement("div");
+ bubble.className = "bubble";
+ bubble.textContent = content;
+ row.appendChild(bubble);
 
-      const welcome = addMessage(tr("welcome"), "bot");
-      welcome.id = "welcome";
-    });
+ $("messages").appendChild(row);
+ $("messages").scrollTop = $("messages").scrollHeight;
 
-    async function loadAI() {
-      if (engine) return engine;
-      if (loadingPromise) return loadingPromise;
+ if (save) {
+  history.push({role:who === "user" ? "user" : "assistant", content});
+ }
 
-      loadingPromise = (async () => {
-        if (!("gpu" in navigator)) {
-          throw new Error(tr("unsupported"));
-        }
+ return bubble;
+}
 
-        setStatus(tr("loadingLibrary"));
-        $("loadBtn").disabled = true;
+function resetWelcome() {
+ $("messages").replaceChildren();
+ history = [];
+ const row = document.createElement("div");
+ row.className = "msg-row";
+ const icon = document.createElement("div");
+ icon.className = "msg-avatar";
+ icon.textContent = "✧";
+ const bubble = document.createElement("div");
+ bubble.className = "bubble";
+ bubble.textContent = t("welcome");
+ row.append(icon,bubble);
+ $("messages").appendChild(row);
+}
 
-        webllm = await import(
-          "https://esm.run/@mlc-ai/web-llm"
-        );
+function saveCurrentChat() {
+ if (!history.length) return;
+ try {
+  savedChats.push({
+   date:new Date().toLocaleString(),
+   messages:history.slice()
+  });
+  if (savedChats.length > 20) savedChats.shift();
+ } catch (_) {}
+}
 
-        setStatus(tr("downloading"));
+async function loadAI() {
+ if (engine) return engine;
+ if (loadingPromise) return loadingPromise;
 
-        const appConfig = {
-          ...webllm.prebuiltAppConfig,
-          cacheBackend: "indexeddb"
-        };
+ loadingPromise = (async () => {
+  if (!navigator.gpu) throw new Error(t("unsupported"));
 
-        engine = await webllm.CreateMLCEngine(model, {
-          appConfig,
-          initProgressCallback: (progress) => {
-            const percent = Math.max(
-              0,
-              Math.min(100, Math.round((progress.progress || 0) * 100))
-            );
+  status(t("loadingLibrary"));
+  $("modelStatus").textContent = t("loadingLibrary");
 
-            $("bar").style.width = percent + "%";
+  webllm = await import("https://esm.run/@mlc-ai/web-llm");
 
-            const detail = progress.text || tr("downloading");
-            setStatus(detail + " · " + percent + "%");
-          }
-        });
+  status(t("loadingModel"));
+  $("modelStatus").textContent = t("loadingModel");
 
-        $("bar").style.width = "100%";
-        $("sendBtn").disabled = false;
-        $("loadBtn").textContent = tr("ready");
-        setStatus(tr("ready"), "success");
+  const appConfig = {
+   ...webllm.prebuiltAppConfig,
+   cacheBackend:"indexeddb"
+  };
 
-        return engine;
-      })();
+  engine = await webllm.CreateMLCEngine(MODEL, {
+   appConfig,
+   initProgressCallback(progress) {
+    const pct = Math.max(0,Math.min(100,Math.round((progress.progress || 0)*100)));
+    $("progressBar").style.width = pct + "%";
+    status((progress.text || t("loadingModel")) + " · " + pct + "%");
+   }
+  });
 
-      try {
-        return await loadingPromise;
-      } catch (error) {
-        engine = null;
-        setStatus(tr("failed") + (error.message || String(error)), "error");
-        throw error;
-      } finally {
-        loadingPromise = null;
-        $("loadBtn").disabled = false;
-      }
-    }
+  $("sendBtn").disabled = false;
+  $("modelStatus").textContent = t("ready");
+  status(t("ready"),"good");
+  return engine;
+ })();
 
-    $("loadBtn").addEventListener("click", async () => {
-      try {
-        await loadAI();
-      } catch (_) {
-        // The error is displayed in the status area.
-      }
-    });
+ try {
+  return await loadingPromise;
+ } catch (err) {
+  engine = null;
+  $("modelStatus").textContent = t("modelWaiting");
+  status(t("failed") + (err.message || String(err)),"error");
+  throw err;
+ } finally {
+  loadingPromise = null;
+ }
+}
 
-    async function sendMessage() {
-      const prompt = $("prompt").value.trim();
+$("loadBtn").addEventListener("click", async () => {
+ $("loadBtn").disabled = true;
+ try {
+  await loadAI();
+ } catch (_) {
+  // The error is shown in the status area.
+ } finally {
+  $("loadBtn").disabled = false;
+ }
+});
 
-      if (!prompt) {
-        setStatus(tr("empty"));
-        return;
-      }
+async function sendMessage() {
+ const prompt = $("prompt").value.trim();
+ if (!prompt) {
+  status(t("empty"));
+  return;
+ }
+ if (!engine) {
+  status(t("needModel"));
+  return;
+ }
+ if (busy) return;
 
-      if (!engine) {
-        setStatus(tr("needModel"));
-        return;
-      }
+ busy = true;
+ $("sendBtn").disabled = true;
+ $("prompt").value = "";
+ addMessage(prompt,"user");
 
-      if (busy) return;
+ const answer = addMessage(t("thinking"),"assistant",false);
 
-      busy = true;
-      $("sendBtn").disabled = true;
-      $("prompt").value = "";
+ try {
+  const messages = [
+   {
+    role:"system",
+    content:lang === "ar"
+     ? "أنت مساعد ذكي مفيد ودقيق. أجب بالعربية ما لم يطلب المستخدم لغة أخرى. لا تدّعِ أنك نفذت أفعالاً لم تنفذها."
+     : "You are a helpful and accurate AI assistant. Respond in the user's language. Never claim to have performed actions you have not performed."
+   },
+   ...history.slice(-12)
+  ];
 
-      addMessage(prompt, "user");
-      const answer = addMessage(tr("thinking"), "bot");
+  const result = await engine.chat.completions.create({
+   messages,
+   temperature:0.7,
+   max_tokens:512
+  });
 
-      history.push({ role: "user", content: prompt });
+  const reply = result.choices?.[0]?.message?.content || t("error");
+  answer.textContent = reply;
+  history.push({role:"assistant",content:reply});
+  status(t("ready"),"good");
+ } catch (err) {
+  answer.textContent = t("error") + (err.message || String(err));
+  status(t("error") + (err.message || String(err)),"error");
+ } finally {
+  busy = false;
+  $("sendBtn").disabled = !engine;
+  $("messages").scrollTop = $("messages").scrollHeight;
+ }
+}
 
-      try {
-        const messages = [
-          {
-            role: "system",
-            content: language === "ar"
-              ? "أنت مساعد ذكي مفيد وواضح. أجب باللغة العربية ما لم يطلب المستخدم لغة أخرى. كن صادقاً بشأن حدود معرفتك."
-              : "You are a helpful, clear AI assistant. Be honest about the limits of your knowledge."
-          },
-          ...history.slice(-12)
-        ];
+$("sendBtn").addEventListener("click",sendMessage);
 
-        const response = await engine.chat.completions.create({
-          messages,
-          temperature: 0.7,
-          max_tokens: 512
-        });
+$("prompt").addEventListener("keydown",event => {
+ if (event.key === "Enter" && !event.shiftKey) {
+  event.preventDefault();
+  sendMessage();
+ }
+});
 
-        const content =
-          response.choices?.[0]?.message?.content ||
-          tr("error");
+$("newChatBtn").addEventListener("click",() => {
+ saveCurrentChat();
+ resetWelcome();
+ status(t("newStarted"));
+});
 
-        answer.textContent = content;
-        history.push({ role: "assistant", content });
-        setStatus(tr("ready"), "success");
-      } catch (error) {
-        answer.textContent = tr("error") + (error.message || String(error));
-        setStatus(tr("error") + (error.message || String(error)), "error");
-      } finally {
-        busy = false;
-        $("sendBtn").disabled = !engine;
-        $("messages").scrollTop = $("messages").scrollHeight;
-      }
-    }
+$("langBtn").addEventListener("click",() => {
+ lang = lang === "ar" ? "en" : "ar";
+ updateLanguage();
+ resetWelcome();
+});
 
-    $("sendBtn").addEventListener("click", sendMessage);
+$("emojiBtn").addEventListener("click",() => {
+ const input = $("prompt");
+ input.value += " 😊";
+ input.focus();
+});
 
-    $("prompt").addEventListener("keydown", (event) => {
-      if (event.key === "Enter" && !event.shiftKey) {
-        event.preventDefault();
-        sendMessage();
-      }
-    });
+$("themeBtn").addEventListener("click",() => {
+ dark = !dark;
+ if (!dark) {
+  document.documentElement.style.setProperty("--bg","#eef2fb");
+  document.documentElement.style.setProperty("--panel","#ffffff");
+  document.documentElement.style.setProperty("--panel2","#e8edfa");
+  document.documentElement.style.setProperty("--border","#cdd6e9");
+  document.documentElement.style.setProperty("--text","#17213a");
+  document.documentElement.style.setProperty("--muted","#596985");
+  $("themeBtn").textContent = "☀";
+ } else {
+  document.documentElement.style.setProperty("--bg","#070b16");
+  document.documentElement.style.setProperty("--panel","#0d1426");
+  document.documentElement.style.setProperty("--panel2","#111c32");
+  document.documentElement.style.setProperty("--border","#202e4d");
+  document.documentElement.style.setProperty("--text","#f2f5ff");
+  document.documentElement.style.setProperty("--muted","#96a5c5");
+  $("themeBtn").textContent = "☾";
+ }
+});
 
-    updateLanguage();
-  </script>
+function showPanel(which) {
+ if (which === "history") {
+  if (!savedChats.length) {
+   addMessage(t("noHistory"),"assistant",false);
+   return;
+  }
+  const summary = savedChats.map((chat,i) =>
+   (i+1) + ". " + chat.date + "\n" +
+   chat.messages.slice(0,2).map(m=>m.content).join("\n")
+  ).join("\n\n");
+  addMessage(t("historyTitle") + "\n\n" + summary,"assistant",false);
+ } else if (which === "settings") {
+  addMessage(t("settingsTitle") + "\n\n" + t("settingsText"),"assistant",false);
+ } else if (which === "model") {
+  addMessage(t("modelText"),"assistant",false);
+  $("modelCard").scrollIntoView({behavior:"smooth",block:"center"});
+ } else {
+  $("prompt").focus();
+ }
+}
+
+$("navChat").addEventListener("click",() => showPanel("chat"));
+$("navHistory").addEventListener("click",() => showPanel("history"));
+$("navModel").addEventListener("click",() => showPanel("model"));
+$("navSettings").addEventListener("click",() => showPanel("settings"));
+
+$("menuBtn").addEventListener("click",() => {
+ const existing = document.getElementById("mobileMenu");
+ if (existing) {
+  existing.remove();
+  return;
+ }
+
+ const menu = document.createElement("div");
+ menu.id = "mobileMenu";
+ menu.style.cssText = "position:fixed;z-index:20;top:65px;left:10px;right:10px;padding:10px;border:1px solid var(--border);border-radius:15px;background:var(--panel);box-shadow:0 12px 40px #0008;display:grid;gap:8px";
+
+ [
+  ["chat","▤"],
+  ["history","◷"],
+  ["model","◇"],
+  ["settings","⚙"]
+ ].forEach(([key,icon]) => {
+  const btn = document.createElement("button");
+  btn.textContent = icon + "  " + t(key);
+  btn.style.cssText = "padding:13px;text-align:start;border:1px solid var(--border);border-radius:10px;background:var(--panel2);color:var(--text)";
+  btn.addEventListener("click",() => {
+   menu.remove();
+   showPanel(key);
+  });
+  menu.appendChild(btn);
+ });
+
+ document.body.appendChild(menu);
+});
+
+updateLanguage();
+</script>
 </body>
 </html>
