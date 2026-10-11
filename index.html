@@ -1,48 +1,602 @@
-async function loadAI(statusBubble) {
-  if (engine) return engine;
-  if (loadingPromise) return loadingPromise;
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080b14">
+  <title>VELNORA | AI Workspace</title>
 
-  loadingPromise = (async () => {
-    if (!navigator.gpu) {
-      throw new Error("WEBGPU_UNAVAILABLE");
+  <style>
+    * { box-sizing: border-box; }
+
+    :root {
+      --bg: #080b14;
+      --panel: #101625;
+      --panel2: #151d30;
+      --border: #263149;
+      --text: #f2f5ff;
+      --muted: #98a4bd;
+      --accent: #9b7cff;
+      --accent2: #57d9c5;
+      --danger: #ff8080;
     }
 
-    statusBubble.textContent = language === "en"
-      ? "Loading AI library..."
-      : "جارٍ تحميل مكتبة الذكاء الاصطناعي...";
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(ellipse at top, #17203a 0%, transparent 55%),
+        var(--bg);
+      color: var(--text);
+      font-family: system-ui, -apple-system, sans-serif;
+    }
 
-    const webllm = await import(
-      "https://esm.run/@mlc-ai/web-llm"
-    );
+    button, textarea, select { font: inherit; }
+    button { cursor: pointer; }
+
+    .app {
+      max-width: 1000px;
+      min-height: 100vh;
+      margin: auto;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 0 22px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo {
+      width: 44px;
+      height: 44px;
+      border-radius: 15px;
+      display: grid;
+      place-items: center;
+      font-size: 23px;
+      font-weight: 800;
+      color: white;
+      background: linear-gradient(135deg, #8d6bff, #43d8c2);
+    }
+
+    h1 {
+      font-size: 22px;
+      margin: 0;
+      letter-spacing: 2px;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 3px;
+    }
+
+    .lang {
+      background: var(--panel2);
+      border: 1px solid var(--border);
+      color: white;
+      padding: 9px 12px;
+      border-radius: 11px;
+    }
+
+    .hero { padding: 26px 0 18px; }
+
+    .badge {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 20px;
+      color: var(--accent2);
+      background: #12302f;
+      font-size: 12px;
+    }
+
+    h2 {
+      font-size: clamp(25px, 6vw, 38px);
+      line-height: 1.35;
+      margin: 14px 0 8px;
+    }
+
+    .description {
+      color: var(--muted);
+      line-height: 1.8;
+      margin: 0;
+      font-size: 14px;
+    }
+
+    .workspace {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-height: 440px;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      background: rgba(16, 22, 37, .94);
+      overflow: hidden;
+    }
+
+    .workspace-head {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .online {
+      font-size: 12px;
+      color: var(--accent2);
+    }
+
+    .clear {
+      border: 1px solid var(--border);
+      color: var(--muted);
+      background: transparent;
+      border-radius: 9px;
+      padding: 7px 10px;
+    }
+
+    #messages {
+      flex: 1;
+      min-height: 260px;
+      max-height: 52vh;
+      overflow-y: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .message {
+      max-width: 90%;
+      padding: 12px 14px;
+      border-radius: 15px;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      line-height: 1.75;
+      font-size: 14px;
+    }
+
+    .bot {
+      align-self: flex-start;
+      background: var(--panel2);
+      border: 1px solid var(--border);
+    }
+
+    .user {
+      align-self: flex-end;
+      background: #45366e;
+      border: 1px solid #66539c;
+    }
+
+    .composer {
+      padding: 12px;
+      border-top: 1px solid var(--border);
+    }
+
+    textarea {
+      display: block;
+      width: 100%;
+      min-height: 85px;
+      resize: vertical;
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      padding: 12px;
+      background: #0a0f1c;
+      color: white;
+      outline: none;
+    }
+
+    textarea:focus { border-color: var(--accent); }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .send {
+      flex: 1;
+      border: 0;
+      border-radius: 12px;
+      padding: 12px;
+      color: #fff;
+      font-weight: 700;
+      background: linear-gradient(110deg, #8968f8, #6750d9);
+    }
+
+    .send:disabled {
+      opacity: .5;
+      cursor: not-allowed;
+    }
+
+    .load {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      color: var(--text);
+      background: var(--panel2);
+    }
+
+    .status {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.8;
+      margin-top: 12px;
+      overflow-wrap: anywhere;
+    }
+
+    .status.error { color: var(--danger); }
+    .status.success { color: var(--accent2); }
+
+    .progress {
+      height: 5px;
+      border-radius: 5px;
+      background: #222c42;
+      margin-top: 8px;
+      overflow: hidden;
+    }
+
+    #bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #9876ff, #57d9c5);
+      transition: width .2s;
+    }
+
+    footer {
+      color: var(--muted);
+      font-size: 12px;
+      text-align: center;
+      padding: 22px 0 10px;
+    }
+
+    @media (max-width: 480px) {
+      .app { padding: 13px; }
+      .hero { padding-top: 21px; }
+      .workspace { min-height: 420px; }
+      .message { max-width: 96%; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <header>
+      <div class="brand">
+        <div class="logo">V</div>
+        <div>
+          <h1>VELNORA</h1>
+          <div class="subtitle" id="brandSubtitle">AI WORKSPACE</div>
+        </div>
+      </div>
+
+      <button class="lang" id="langBtn" type="button">English</button>
+    </header>
+
+    <section class="hero">
+      <span class="badge" id="badge">ذكاء اصطناعي محلي</span>
+      <h2 id="headline">مساحة ذكية لأفكارك</h2>
+      <p class="description" id="description">
+        تحدث مع مساعدك الذكي مباشرة من المتصفح.
+        لا تحتاج إلى مفتاح API مدفوع.
+      </p>
+    </section>
+
+    <main class="workspace">
+      <div class="workspace-head">
+        <div>
+          <strong id="chatTitle">المساعد الذكي</strong>
+          <div class="subtitle" id="modelName">Qwen 2.5 · 0.5B</div>
+        </div>
+
+        <button class="clear" id="clearBtn" type="button">
+          محادثة جديدة
+        </button>
+      </div>
+
+      <div id="messages" aria-live="polite">
+        <div class="message bot" id="welcome">
+          أهلاً بك في VELNORA! حمّل النموذج أولاً، ثم اكتب رسالتك.
+        </div>
+      </div>
+
+      <div class="composer">
+        <textarea
+          id="prompt"
+          maxlength="4000"
+          placeholder="اكتب رسالتك هنا..."
+          aria-label="رسالتك"
+        ></textarea>
+
+        <div class="actions">
+          <button class="send" id="sendBtn" type="button" disabled>
+            إرسال
+          </button>
+
+          <button class="load" id="loadBtn" type="button">
+            تحميل الذكاء الاصطناعي
+          </button>
+        </div>
+
+        <div class="status" id="status">
+          لم يتم تحميل النموذج بعد.
+        </div>
+
+        <div class="progress">
+          <div id="bar"></div>
+        </div>
+      </div>
+    </main>
+
+    <footer id="footer">
+      VELNORA · يعمل النموذج على جهازك بعد تنزيله.
+    </footer>
+  </div>
+
+  <script type="module">
+    const $ = (id) => document.getElementById(id);
+
+    let language = "ar";
+    let engine = null;
+    let loadingPromise = null;
+    let busy = false;
+    let webllm = null;
+    let history = [];
 
     const model = "Qwen2.5-0.5B-Instruct-q4f16_1-MLC";
 
-    const appConfig = {
-      ...webllm.prebuiltAppConfig,
-      cacheBackend: "indexeddb"
+    const text = {
+      ar: {
+        subtitle: "مساحة عمل ذكية",
+        badge: "ذكاء اصطناعي محلي",
+        headline: "مساحة ذكية لأفكارك",
+        description: "تحدث مع مساعدك الذكي مباشرة من المتصفح. لا تحتاج إلى مفتاح API مدفوع.",
+        chat: "المساعد الذكي",
+        clear: "محادثة جديدة",
+        welcome: "أهلاً بك في VELNORA! حمّل النموذج أولاً، ثم اكتب رسالتك.",
+        placeholder: "اكتب رسالتك هنا...",
+        send: "إرسال",
+        load: "تحميل الذكاء الاصطناعي",
+        loading: "جارٍ تجهيز الذكاء الاصطناعي...",
+        notLoaded: "لم يتم تحميل النموذج بعد.",
+        ready: "الذكاء الاصطناعي جاهز! يمكنك بدء المحادثة.",
+        needModel: "حمّل النموذج أولاً قبل إرسال الرسائل.",
+        empty: "اكتب رسالة أولاً.",
+        unsupported: "المتصفح أو الجهاز لا يدعم WebGPU. جرّب متصفحاً وجهازاً متوافقين.",
+        failed: "تعذّر تشغيل الذكاء الاصطناعي: ",
+        thinking: "يفكر...",
+        error: "حدث خطأ: ",
+        footer: "VELNORA · يعمل النموذج على جهازك بعد تنزيله.",
+        loadingLibrary: "جارٍ تحميل مكتبة الذكاء الاصطناعي...",
+        downloading: "جارٍ تنزيل النموذج وتجهيزه..."
+      },
+      en: {
+        subtitle: "SMART WORKSPACE",
+        badge: "LOCAL AI",
+        headline: "A smarter space for your ideas",
+        description: "Chat with your AI assistant directly in your browser. No paid API key required.",
+        chat: "AI Assistant",
+        clear: "New chat",
+        welcome: "Welcome to VELNORA! Load the model first, then send a message.",
+        placeholder: "Type your message here...",
+        send: "Send",
+        load: "Load AI",
+        loading: "Preparing AI...",
+        notLoaded: "The model has not been loaded yet.",
+        ready: "AI is ready! Start chatting.",
+        needModel: "Load the model before sending messages.",
+        empty: "Please enter a message first.",
+        unsupported: "This browser or device does not support WebGPU. Try a compatible browser and device.",
+        failed: "Could not start AI: ",
+        thinking: "Thinking...",
+        error: "An error occurred: ",
+        footer: "VELNORA · The model runs on your device after downloading.",
+        loadingLibrary: "Loading AI library...",
+        downloading: "Downloading and preparing the model..."
+      }
     };
 
-    engine = await webllm.CreateMLCEngine(model, {
-      appConfig,
-      initProgressCallback: (progress) => {
-        if (statusBubble.isConnected) {
-          const percent = Math.round(
-            (progress.progress || 0) * 100
-          );
+    function tr(key) {
+      return text[language][key] || key;
+    }
 
-          statusBubble.textContent = language === "en"
-            ? "Preparing AI model: " + percent + "%"
-            : "تجهيز نموذج الذكاء الاصطناعي: " + percent + "%";
+    function setStatus(message, kind = "") {
+      $("status").textContent = message;
+      $("status").className = "status " + kind;
+    }
+
+    function addMessage(content, type = "bot") {
+      const element = document.createElement("div");
+      element.className = "message " + type;
+      element.textContent = content;
+      $("messages").appendChild(element);
+      $("messages").scrollTop = $("messages").scrollHeight;
+      return element;
+    }
+
+    function updateLanguage() {
+      const t = text[language];
+      document.documentElement.lang = language;
+      document.documentElement.dir = language === "ar" ? "rtl" : "ltr";
+
+      $("brandSubtitle").textContent = t.subtitle;
+      $("badge").textContent = t.badge;
+      $("headline").textContent = t.headline;
+      $("description").textContent = t.description;
+      $("chatTitle").textContent = t.chat;
+      $("clearBtn").textContent = t.clear;
+      $("prompt").placeholder = t.placeholder;
+      $("sendBtn").textContent = t.send;
+      $("loadBtn").textContent = engine ? t.ready : t.load;
+      $("footer").textContent = t.footer;
+      $("langBtn").textContent = language === "ar" ? "English" : "العربية";
+
+      $("welcome").textContent = t.welcome;
+
+      if (!engine && !loadingPromise) {
+        setStatus(t.notLoaded);
+      }
+    }
+
+    $("langBtn").addEventListener("click", () => {
+      language = language === "ar" ? "en" : "ar";
+      updateLanguage();
+    });
+
+    $("clearBtn").addEventListener("click", () => {
+      history = [];
+      $("messages").replaceChildren();
+
+      const welcome = addMessage(tr("welcome"), "bot");
+      welcome.id = "welcome";
+    });
+
+    async function loadAI() {
+      if (engine) return engine;
+      if (loadingPromise) return loadingPromise;
+
+      loadingPromise = (async () => {
+        if (!("gpu" in navigator)) {
+          throw new Error(tr("unsupported"));
         }
+
+        setStatus(tr("loadingLibrary"));
+        $("loadBtn").disabled = true;
+
+        webllm = await import(
+          "https://esm.run/@mlc-ai/web-llm"
+        );
+
+        setStatus(tr("downloading"));
+
+        const appConfig = {
+          ...webllm.prebuiltAppConfig,
+          cacheBackend: "indexeddb"
+        };
+
+        engine = await webllm.CreateMLCEngine(model, {
+          appConfig,
+          initProgressCallback: (progress) => {
+            const percent = Math.max(
+              0,
+              Math.min(100, Math.round((progress.progress || 0) * 100))
+            );
+
+            $("bar").style.width = percent + "%";
+
+            const detail = progress.text || tr("downloading");
+            setStatus(detail + " · " + percent + "%");
+          }
+        });
+
+        $("bar").style.width = "100%";
+        $("sendBtn").disabled = false;
+        $("loadBtn").textContent = tr("ready");
+        setStatus(tr("ready"), "success");
+
+        return engine;
+      })();
+
+      try {
+        return await loadingPromise;
+      } catch (error) {
+        engine = null;
+        setStatus(tr("failed") + (error.message || String(error)), "error");
+        throw error;
+      } finally {
+        loadingPromise = null;
+        $("loadBtn").disabled = false;
+      }
+    }
+
+    $("loadBtn").addEventListener("click", async () => {
+      try {
+        await loadAI();
+      } catch (_) {
+        // The error is displayed in the status area.
       }
     });
 
-    return engine;
-  })();
+    async function sendMessage() {
+      const prompt = $("prompt").value.trim();
 
-  try {
-    return await loadingPromise;
-  } finally {
-    loadingPromise = null;
-  }
-}
+      if (!prompt) {
+        setStatus(tr("empty"));
+        return;
+      }
+
+      if (!engine) {
+        setStatus(tr("needModel"));
+        return;
+      }
+
+      if (busy) return;
+
+      busy = true;
+      $("sendBtn").disabled = true;
+      $("prompt").value = "";
+
+      addMessage(prompt, "user");
+      const answer = addMessage(tr("thinking"), "bot");
+
+      history.push({ role: "user", content: prompt });
+
+      try {
+        const messages = [
+          {
+            role: "system",
+            content: language === "ar"
+              ? "أنت مساعد ذكي مفيد وواضح. أجب باللغة العربية ما لم يطلب المستخدم لغة أخرى. كن صادقاً بشأن حدود معرفتك."
+              : "You are a helpful, clear AI assistant. Be honest about the limits of your knowledge."
+          },
+          ...history.slice(-12)
+        ];
+
+        const response = await engine.chat.completions.create({
+          messages,
+          temperature: 0.7,
+          max_tokens: 512
+        });
+
+        const content =
+          response.choices?.[0]?.message?.content ||
+          tr("error");
+
+        answer.textContent = content;
+        history.push({ role: "assistant", content });
+        setStatus(tr("ready"), "success");
+      } catch (error) {
+        answer.textContent = tr("error") + (error.message || String(error));
+        setStatus(tr("error") + (error.message || String(error)), "error");
+      } finally {
+        busy = false;
+        $("sendBtn").disabled = !engine;
+        $("messages").scrollTop = $("messages").scrollHeight;
+      }
+    }
+
+    $("sendBtn").addEventListener("click", sendMessage);
+
+    $("prompt").addEventListener("keydown", (event) => {
+      if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
+        sendMessage();
+      }
+    });
+
+    updateLanguage();
+  </script>
+</body>
+</html>
