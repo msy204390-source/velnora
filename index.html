@@ -1,759 +1,197 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl" data-theme="dark">
+<html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#0b1020">
-<meta name="description" content="VELNORA — AI, creativity and digital intelligence.">
-<title>VELNORA — Intelligent Workspace</title>
-
-<script>
-(function(){
-  try {
-    const saved = localStorage.getItem("velnora-theme");
-    document.documentElement.dataset.theme =
-      saved === "light" ? "light" : "dark";
-  } catch(e) {}
-})();
-</script>
-
-<style>
-:root {
-  color-scheme: dark;
-  --bg:#0b1020;
-  --surface:#11182b;
-  --surface2:#18223a;
-  --text:#f3f5ff;
-  --muted:#9daac4;
-  --border:#26324b;
-  --accent:#9b87ff;
-  --accent2:#58dcca;
-  --shadow:0 18px 55px rgba(0,0,0,.2);
-}
-:root[data-theme="light"] {
-  color-scheme:light;
-  --bg:#f4f6fc;
-  --surface:#ffffff;
-  --surface2:#edf0fa;
-  --text:#182039;
-  --muted:#68738e;
-  --border:#dfe4f0;
-  --accent:#7054e8;
-  --accent2:#078f88;
-  --shadow:0 18px 55px rgba(35,45,90,.08);
-}
-* { box-sizing:border-box; margin:0; padding:0; }
-html { scroll-behavior:smooth; scroll-padding-top:90px; }
-body {
-  font-family:system-ui,-apple-system,"Segoe UI",Tahoma,Arial,sans-serif;
-  background:var(--bg); color:var(--text);
-  line-height:1.75; min-height:100vh;
-  transition:background .25s,color .25s;
-}
-button,input { font:inherit; }
-button,a { -webkit-tap-highlight-color:transparent; }
-button { cursor:pointer; }
-a { color:inherit; text-decoration:none; }
-.container { width:min(1120px,92%); margin:auto; }
-header {
-  position:sticky; top:0; z-index:20;
-  background:color-mix(in srgb,var(--bg) 90%,transparent);
-  backdrop-filter:blur(18px);
-  border-bottom:1px solid var(--border);
-}
-.nav {
-  min-height:72px; display:flex; align-items:center;
-  justify-content:space-between; gap:15px;
-}
-.logo { font-size:24px; font-weight:900; letter-spacing:2px; }
-.logo span { color:var(--accent); }
-.nav-links { display:flex; gap:24px; color:var(--muted); font-size:14px; }
-.nav-links a:hover { color:var(--accent); }
-.nav-actions { display:flex; align-items:center; gap:8px; }
-.btn {
-  border:1px solid var(--border); border-radius:12px;
-  padding:10px 15px; background:var(--surface2);
-  color:var(--text); display:inline-flex;
-  align-items:center; justify-content:center; gap:8px;
-  font-weight:650; transition:.2s;
-}
-.btn:hover { border-color:var(--accent); transform:translateY(-1px); }
-.btn-primary {
-  background:linear-gradient(120deg,#8870f5,#637ff4);
-  border-color:transparent; color:#fff;
-}
-.icon-btn { min-width:43px; min-height:43px; font-size:19px; }
-.hero {
-  position:relative; overflow:hidden; text-align:center;
-  padding:100px 0 78px;
-}
-.hero:before {
-  content:""; position:absolute; width:360px; height:360px;
-  background:var(--accent); opacity:.13; filter:blur(100px);
-  border-radius:50%; top:0; left:calc(50% - 180px);
-  pointer-events:none;
-}
-.eyebrow {
-  display:inline-block; position:relative;
-  padding:6px 14px; border:1px solid var(--border);
-  background:var(--surface); border-radius:50px;
-  color:var(--accent); font-size:12px; margin-bottom:22px;
-}
-h1 {
-  position:relative; font-size:clamp(38px,7vw,68px);
-  line-height:1.18; letter-spacing:-1.5px; margin-bottom:22px;
-}
-.gradient {
-  background:linear-gradient(100deg,var(--accent),var(--accent2));
-  -webkit-background-clip:text; background-clip:text;
-  color:transparent;
-}
-.hero p {
-  color:var(--muted); max-width:670px;
-  margin:0 auto 28px; font-size:17px;
-}
-.hero-actions {
-  display:flex; flex-wrap:wrap; justify-content:center; gap:12px;
-}
-.trust { color:var(--muted); font-size:12px; margin-top:24px; }
-section { padding:70px 0; }
-.section-head { text-align:center; max-width:700px; margin:0 auto 36px; }
-.section-head h2 { font-size:clamp(27px,5vw,40px); line-height:1.3; margin-bottom:12px; }
-.section-head p { color:var(--muted); }
-.grid {
-  display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:17px;
-}
-.card {
-  min-width:0; padding:25px; border-radius:19px;
-  background:var(--surface); border:1px solid var(--border);
-  box-shadow:var(--shadow); transition:transform .2s,border-color .2s;
-}
-.card:hover { transform:translateY(-3px); border-color:var(--accent); }
-.card-icon {
-  display:grid; place-items:center; width:48px; height:48px;
-  background:var(--surface2); border-radius:15px;
-  font-size:23px; margin-bottom:17px;
-}
-.card h3 { font-size:18px; margin-bottom:8px; }
-.card p { color:var(--muted); font-size:14px; }
-.assistant-layout {
-  display:grid; grid-template-columns:.8fr 1.2fr;
-  gap:28px; align-items:start;
-}
-.assistant-info h2 { font-size:clamp(28px,5vw,42px); line-height:1.3; margin:12px 0; }
-.assistant-info p { color:var(--muted); margin-bottom:20px; }
-.points { display:grid; gap:10px; font-size:14px; }
-.point { display:flex; gap:10px; align-items:center; }
-.check { color:var(--accent2); font-weight:900; }
-.chat {
-  min-width:0; overflow:hidden; border-radius:22px;
-  background:var(--surface); border:1px solid var(--border);
-  box-shadow:var(--shadow);
-}
-.chat-head {
-  padding:17px; display:flex; align-items:center; gap:12px;
-  border-bottom:1px solid var(--border);
-}
-.avatar {
-  width:43px; height:43px; display:grid; place-items:center;
-  background:linear-gradient(135deg,#8b71f5,#49cfc7);
-  color:white; border-radius:14px; font-size:22px;
-}
-.chat-head small { display:block; color:var(--muted); font-size:12px; }
-.online {
-  width:9px; height:9px; background:#35c991;
-  border-radius:50%; margin-inline-start:auto;
-}
-.chat-messages {
-  padding:18px; height:320px; overflow-y:auto;
-  display:flex; flex-direction:column; gap:12px;
-}
-.bubble {
-  max-width:92%; padding:12px 14px; border-radius:15px;
-  font-size:14px; white-space:pre-wrap; overflow-wrap:anywhere;
-}
-.bubble-ai {
-  align-self:flex-start; background:var(--surface2);
-  border:1px solid var(--border);
-}
-.bubble-user { align-self:flex-end; background:#7054e8; color:#fff; }
-.status-box {
-  padding:14px 17px; border-top:1px solid var(--border);
-  display:none;
-}
-.status-box.visible { display:block; }
-.status-text { color:var(--muted); font-size:12px; margin-bottom:8px; }
-.progress-track {
-  height:6px; background:var(--surface2);
-  border-radius:20px; overflow:hidden;
-}
-.progress-bar {
-  height:100%; width:0%;
-  background:linear-gradient(90deg,#8c71f5,#58dcca);
-  border-radius:20px; transition:width .25s;
-}
-.chat-form {
-  display:flex; gap:9px; padding:14px;
-  border-top:1px solid var(--border);
-}
-.chat-form input {
-  min-width:0; flex:1; padding:12px 14px;
-  color:var(--text); background:var(--bg);
-  border:1px solid var(--border); border-radius:12px;
-  outline:none;
-}
-.chat-form input:focus { border-color:var(--accent); }
-.chat-form button { border:0; min-width:76px; }
-.chat-form button:disabled { opacity:.55; cursor:wait; }
-.chat-note { padding:0 16px 15px; color:var(--muted); font-size:11px; }
-.steps { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:17px; }
-.step { color:var(--accent); font-size:12px; font-weight:800; margin-bottom:10px; }
-.cta {
-  text-align:center; padding:42px 22px; border-radius:23px;
-  border:1px solid var(--border); background:var(--surface);
-}
-.cta h2 { font-size:clamp(27px,5vw,40px); margin-bottom:10px; }
-.cta p { color:var(--muted); margin-bottom:22px; }
-footer { border-top:1px solid var(--border); padding:25px 0; color:var(--muted); font-size:12px; }
-.footer-inner { display:flex; flex-wrap:wrap; justify-content:space-between; gap:10px; }
-[hidden] { display:none !important; }
-@media(max-width:800px) {
-  .nav-links { display:none; }
-  .hero { padding:72px 0 55px; }
-  .assistant-layout { grid-template-columns:1fr; }
-  .grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
-  .steps { grid-template-columns:1fr; }
-}
-@media(max-width:480px) {
-  .grid { grid-template-columns:1fr; }
-  .logo { font-size:20px; }
-  .nav { min-height:65px; }
-  .nav-actions .btn { padding:9px 10px; font-size:12px; }
-  .hero p { font-size:15px; }
-  .card { padding:21px; }
-  .chat-messages { height:300px; }
-}
-</style>
-</head>
-
-<body>
-<header>
-  <div class="container nav">
-    <a class="logo" href="#home">VEL<span>N</span>ORA</a>
-
-    <nav class="nav-links">
-      <a href="#services" data-en="Services" data-ar="الخدمات">الخدمات</a>
-      <a href="#assistant" data-en="AI Assistant" data-ar="المساعد الذكي">المساعد الذكي</a>
-      <a href="#how" data-en="How it works" data-ar="كيف نعمل">كيف نعمل</a>
-    </nav>
-
-    <div class="nav-actions">
-      <button class="btn icon-btn" id="themeButton" type="button"
-        aria-label="تبديل الوضع">☀️</button>
-      <button class="btn" id="languageButton" type="button">English</button>
-    </div>
-  </div>
-</header>
-
-<main>
-<section class="hero" id="home">
-  <div class="container">
-    <div class="eyebrow"
-      data-en="✦ THE NEXT GENERATION OF DIGITAL WORK"
-      data-ar="✦ جيل جديد من العمل الرقمي">
-      ✦ جيل جديد من العمل الرقمي
-    </div>
-
-    <h1>
-      <span data-en="Think beyond." data-ar="فكّر أبعد.">فكّر أبعد.</span>
-      <br>
-      <span class="gradient" data-en="Build what's next." data-ar="وابنِ المستقبل.">وابنِ المستقبل.</span>
-    </h1>
-
-    <p data-en="A modern digital workspace for ideas, AI assistance and smarter ways to work."
-       data-ar="مساحة رقمية حديثة للأفكار والمساعدة الذكية وطرق عمل أكثر كفاءة.">
-       مساحة رقمية حديثة للأفكار والمساعدة الذكية وطرق عمل أكثر كفاءة.
-    </p>
-
-    <div class="hero-actions">
-      <a class="btn btn-primary" href="#assistant"
-        data-en="Meet your AI assistant →"
-        data-ar="جرّب مساعدك الذكي ←">جرّب مساعدك الذكي ←</a>
-      <a class="btn" href="#services"
-        data-en="Explore the platform"
-        data-ar="اكتشف المنصة">اكتشف المنصة</a>
-    </div>
-
-    <div class="trust"
-      data-en="Designed for creators, individuals and growing businesses."
-      data-ar="مصممة للمبدعين والأفراد والشركات الطموحة.">
-      مصممة للمبدعين والأفراد والشركات الطموحة.
-    </div>
-  </div>
-</section>
-
-<section id="services">
-  <div class="container">
-    <div class="section-head">
-      <h2 data-en="A world of possibilities" data-ar="إمكانيات بلا حدود">
-        إمكانيات بلا حدود
-      </h2>
-      <p data-en="Explore the areas VELNORA is designed to help you with."
-         data-ar="اكتشف المجالات التي صُممت VELNORA لمساعدتك فيها.">
-        اكتشف المجالات التي صُممت VELNORA لمساعدتك فيها.
-      </p>
-    </div>
-
-    <div class="grid">
-      <article class="card">
-        <div class="card-icon">✦</div>
-        <h3 data-en="AI Solutions" data-ar="حلول الذكاء الاصطناعي">حلول الذكاء الاصطناعي</h3>
-        <p data-en="Explore ideas, write content and solve problems with AI."
-           data-ar="استكشف الأفكار واكتب المحتوى وساعد نفسك في حل المشكلات.">
-          استكشف الأفكار واكتب المحتوى وساعد نفسك في حل المشكلات.
-        </p>
-      </article>
-
-      <article class="card">
-        <div class="card-icon">⚙️</div>
-        <h3 data-en="Automation" data-ar="أتمتة الأعمال">أتمتة الأعمال</h3>
-        <p data-en="Discover ways to simplify repetitive tasks and workflows."
-           data-ar="اكتشف طرقاً لتبسيط المهام المتكررة ومسارات العمل.">
-          اكتشف طرقاً لتبسيط المهام المتكررة ومسارات العمل.
-        </p>
-      </article>
-
-      <article class="card">
-        <div class="card-icon">⌘</div>
-        <h3 data-en="Software & Web" data-ar="البرمجيات والمواقع">البرمجيات والمواقع</h3>
-        <p data-en="Plan websites, applications and digital products."
-           data-ar="خطط للمواقع والتطبيقات والمنتجات الرقمية.">
-          خطط للمواقع والتطبيقات والمنتجات الرقمية.
-        </p>
-      </article>
-
-      <article class="card">
-        <div class="card-icon">↗</div>
-        <h3 data-en="Growth & Marketing" data-ar="النمو والتسويق">النمو والتسويق</h3>
-        <p data-en="Develop content ideas, marketing plans and strategies."
-           data-ar="طوّر أفكار المحتوى والخطط والاستراتيجيات التسويقية.">
-          طوّر أفكار المحتوى والخطط والاستراتيجيات التسويقية.
-        </p>
-      </article>
-
-      <article class="card">
-        <div class="card-icon">✎</div>
-        <h3 data-en="Creative Studio" data-ar="الاستوديو الإبداعي">الاستوديو الإبداعي</h3>
-        <p data-en="Organize creative ideas and shape your next project."
-           data-ar="نظّم أفكارك الإبداعية وحدد ملامح مشروعك القادم.">
-          نظّم أفكارك الإبداعية وحدد ملامح مشروعك القادم.
-        </p>
-      </article>
-
-      <article class="card">
-        <div class="card-icon">◈</div>
-        <h3 data-en="Business Insights" data-ar="رؤى الأعمال">رؤى الأعمال</h3>
-        <p data-en="Structure information and make clearer plans."
-           data-ar="نظّم المعلومات وابنِ خططاً أكثر وضوحاً.">
-          نظّم المعلومات وابنِ خططاً أكثر وضوحاً.
-        </p>
-      </article>
-    </div>
-  </div>
-</section>
-
-<section id="assistant">
-  <div class="container assistant-layout">
-    <div class="assistant-info">
-      <div class="eyebrow" data-en="YOUR AI WORKSPACE" data-ar="مساحة عملك الذكية">
-        مساحة عملك الذكية
-      </div>
-      <h2 data-en="Meet your VELNORA assistant."
-          data-ar="تعرّف على مساعد VELNORA.">
-        تعرّف على مساعد VELNORA.
-      </h2>
-      <p data-en="Ask questions, develop ideas and get help with writing, learning and planning."
-         data-ar="اطرح الأسئلة وطوّر أفكارك واحصل على المساعدة في الكتابة والتعلّم والتخطيط.">
-        اطرح الأسئلة وطوّر أفكارك واحصل على المساعدة في الكتابة والتعلّم والتخطيط.
-      </p>
-      <div class="points">
-        <div class="point"><span class="check">✓</span>
-          <span data-en="Brainstorming and writing" data-ar="توليد الأفكار والكتابة">توليد الأفكار والكتابة</span>
-        </div>
-        <div class="point"><span class="check">✓</span>
-          <span data-en="Learning and research support" data-ar="المساعدة في التعلّم والبحث">المساعدة في التعلّم والبحث</span>
-        </div>
-        <div class="point"><span class="check">✓</span>
-          <span data-en="Project planning" data-ar="تخطيط المشاريع">تخطيط المشاريع</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="chat">
-      <div class="chat-head">
-        <div class="avatar">✦</div>
-        <div>
-          <strong>VELNORA AI</strong>
-          <small id="modelLabel">المساعد الذكي</small>
-        </div>
-        <div class="online"></div>
-      </div>
-
-      <div class="chat-messages" id="messages" aria-live="polite">
-        <div class="bubble bubble-ai" id="welcomeMessage">
-          أهلاً بك في VELNORA! اكتب رسالتك لبدء المحادثة.
-        </div>
-      </div>
-
-      <div class="status-box" id="statusBox">
-        <div class="status-text" id="statusText">جاهز</div>
-        <div class="progress-track">
-          <div class="progress-bar" id="progressBar"></div>
-        </div>
-      </div>
-
-      <form class="chat-form" id="chatForm">
-        <input id="messageInput" maxlength="4000" autocomplete="off"
-          required placeholder="اكتب رسالتك هنا..." aria-label="رسالتك">
-        <button class="btn btn-primary" id="sendButton" type="submit">
-          إرسال
-        </button>
-      </form>
-
-      <div class="chat-note" id="chatNote">
-        عند أول استخدام قد يحتاج النموذج إلى تنزيل ملفاته قبل بدء الرد.
-      </div>
-    </div>
-  </div>
-</section>
-
-<section id="how">
-  <div class="container">
-    <div class="section-head">
-      <h2 data-en="From idea to action" data-ar="من الفكرة إلى التنفيذ">
-        من الفكرة إلى التنفيذ
-      </h2>
-      <p data-en="A simple path to make progress." data-ar="خطوات واضحة للانطلاق.">
-        خطوات واضحة للانطلاق.
-      </p>
-    </div>
-
-    <div class="steps">
-      <article class="card">
-        <div class="step">STEP 01</div>
-        <h3 data-en="Describe your goal" data-ar="حدّد هدفك">حدّد هدفك</h3>
-        <p data-en="Explain the idea or challenge you want to work on."
-           data-ar="اشرح الفكرة أو المشكلة التي تريد العمل عليها.">
-          اشرح الفكرة أو المشكلة التي تريد العمل عليها.
-        </p>
-      </article>
-
-      <article class="card">
-        <div class="step">STEP 02</div>
-        <h3 data-en="Explore possibilities" data-ar="استكشف الحلول">استكشف الحلول</h3>
-        <p data-en="Compare ideas and identify a practical next step."
-           data-ar="قارن الأفكار وحدّد الخطوة العملية التالية.">
-          قارن الأفكار وحدّد الخطوة العملية التالية.
-        </p>
-      </article>
-
-      <article class="card">
-        <div class="step">STEP 03</div>
-        <h3 data-en="Build and improve" data-ar="ابنِ وطوّر">ابنِ وطوّر</h3>
-        <p data-en="Refine your plan as your project grows."
-           data-ar="حسّن خطتك مع تطوّر مشروعك.">
-          حسّن خطتك مع تطوّر مشروعك.
-        </p>
-      </article>
-    </div>
-  </div>
-</section>
-
-<section>
-  <div class="container">
-    <div class="cta">
-      <h2 data-en="Your next idea starts here." data-ar="فكرتك القادمة تبدأ هنا.">
-        فكرتك القادمة تبدأ هنا.
-      </h2>
-      <p data-en="Take the first step with VELNORA." data-ar="ابدأ خطوتك الأولى مع VELNORA.">
-        ابدأ خطوتك الأولى مع VELNORA.
-      </p>
-      <a class="btn btn-primary" href="#assistant"
-         data-en="Start now →" data-ar="ابدأ الآن ←">ابدأ الآن ←</a>
-    </div>
-  </div>
-</section>
-</main>
-
-<footer>
-  <div class="container footer-inner">
-    <strong>VELNORA</strong>
-    <span>© <span id="year"></span> VELNORA</span>
-  </div>
-</footer>
-
-<script type="module">
-"use strict";
-
-const $ = id => document.getElementById(id);
-const root = document.documentElement;
-
-const messages = $("messages");
-const form = $("chatForm");
-const input = $("messageInput");
-const sendButton = $("sendButton");
-const statusBox = $("statusBox");
-const statusText = $("statusText");
-const progressBar = $("progressBar");
-const languageButton = $("languageButton");
-const themeButton = $("themeButton");
-
-let language = "ar";
-let engine = null;
-let loadingPromise = null;
-let conversation = [];
-let lastProgressTime = 0;
-
-$("year").textContent = new Date().getFullYear();
-
-const strings = {
-  ar: {
-    send:"إرسال",
-    placeholder:"اكتب رسالتك هنا...",
-    welcome:"أهلاً بك في VELNORA! اكتب رسالتك لبدء المحادثة.",
-    note:"عند أول استخدام قد يحتاج النموذج إلى تنزيل ملفاته قبل بدء الرد.",
-    loadingLibrary:"جارٍ الاتصال بمكتبة الذكاء الاصطناعي...",
-    loadingModel:"جارٍ تنزيل وتجهيز نموذج الذكاء الاصطناعي...",
-    thinking:"جارٍ التفكير...",
-    noWebGPU:"المتصفح لا يدعم WebGPU اللازم لتشغيل هذا النموذج. جرّب أحدث إصدار من Chrome.",
-    stalled:"التنزيل لم يتقدم. تحقق من الإنترنت ثم أعد المحاولة. إذا استمرت المشكلة فقد يكون مصدر النموذج غير متاح.",
-    error:"تعذر تشغيل الذكاء الاصطناعي: ",
-    empty:"لم يصل رد من النموذج.",
-    ready:"النموذج جاهز",
-    light:"التبديل إلى الوضع الفاتح",
-    dark:"التبديل إلى الوضع الداكن",
-    model:"مساعد ذكاء اصطناعي محلي",
-    languageButton:"English"
-  },
-  en: {
-    send:"Send",
-    placeholder:"Type your message...",
-    welcome:"Welcome to VELNORA! Write a message to start chatting.",
-    note:"The first use may require downloading the model files before it can respond.",
-    loadingLibrary:"Connecting to the AI library...",
-    loadingModel:"Downloading and preparing the AI model...",
-    thinking:"Thinking...",
-    noWebGPU:"This browser does not support WebGPU, which this model requires. Try an updated version of Chrome.",
-    stalled:"Download progress has stalled. Check your connection and retry. The model source may also be unavailable.",
-    error:"Could not start the AI: ",
-    empty:"The model returned an empty response.",
-    ready:"Model ready",
-    light:"Switch to light mode",
-    dark:"Switch to dark mode",
-    model:"Local AI assistant",
-    languageButton:"العربية"
-  }
-};
-
-function tr(key) {
-  return strings[language][key];
-}
-
-function setStatus(text, percent = null, show = true) {
-  statusBox.classList.toggle("visible", show);
-  statusText.textContent = text;
-
-  if (percent !== null) {
-    progressBar.style.width =
-      Math.max(0, Math.min(100, percent)) + "%";
-  }
-}
-
-function addMessage(text, type = "ai") {
-  const bubble = document.createElement("div");
-  bubble.className = "bubble " +
-    (type === "user" ? "bubble-user" : "bubble-ai");
-  bubble.textContent = text;
-  messages.appendChild(bubble);
-  messages.scrollTop = messages.scrollHeight;
-  return bubble;
-}
-
-function applyLanguage(next) {
-  language = next;
-  root.lang = language;
-  root.dir = language === "ar" ? "rtl" : "ltr";
-  document.body.dir = root.dir;
-
-  document.querySelectorAll("[data-en][data-ar]").forEach(el => {
-    el.textContent = el.dataset[language];
-  });
-
-  input.placeholder = tr("placeholder");
-  input.setAttribute("aria-label", tr("placeholder"));
-  sendButton.textContent = tr("send");
-  languageButton.textContent = tr("languageButton");
-  $("chatNote").textContent = tr("note");
-  $("modelLabel").textContent = tr("model");
-  $("welcomeMessage").textContent = tr("welcome");
-
-  const mode = root.dataset.theme;
-  themeButton.textContent = mode === "dark" ? "☀️" : "🌙";
-  themeButton.setAttribute("aria-label",
-    mode === "dark" ? tr("light") : tr("dark"));
-}
-
-function applyTheme(mode) {
-  root.dataset.theme = mode;
-  try {
-    localStorage.setItem("velnora-theme", mode);
-  } catch (e) {}
-
-  const meta = document.querySelector('meta[name="theme-color"]');
-  meta.content = mode === "dark" ? "#0b1020" : "#f4f6fc";
-
-  themeButton.textContent = mode === "dark" ? "☀️" : "🌙";
-  themeButton.setAttribute("aria-label",
-    mode === "dark" ? tr("light") : tr("dark"));
-}
-
-themeButton.addEventListener("click", () => {
-  applyTheme(root.dataset.theme === "dark" ? "light" : "dark");
-});
-
-languageButton.addEventListener("click", () => {
-  applyLanguage(language === "ar" ? "en" : "ar");
-});
-
-async function loadAI(bubble) {
-  if (engine) return engine;
-  if (loadingPromise) return loadingPromise;
-
-  loadingPromise = (async () => {
-    if (!navigator.gpu) {
-      throw new Error("WEBGPU_UNAVAILABLE");
-    }
-
-    setStatus(tr("loadingLibrary"), 0);
-
-    const webllm = await import(
-      "https://esm.run/@mlc-ai/web-llm"
-    );
-
-    const model = "Qwen2.5-0.5B-Instruct-q4f16_1-MLC";
-
-    setStatus(tr("loadingModel"), 0);
-
-    let receivedProgress = false;
-    lastProgressTime = Date.now();
-
-    const watchdog = setInterval(() => {
-      if (!receivedProgress &&
-          Date.now() - lastProgressTime > 30000) {
-        setStatus(tr("stalled"), 0);
-      }
-    }, 5000);
-
-    try {
-      engine = await webllm.CreateMLCEngine(model, {
-        initProgressCallback: (report) => {
-          receivedProgress = true;
-          lastProgressTime = Date.now();
-
-          const percent = Math.round(
-            (report.progress || 0) * 100
-          );
-
-          setStatus(
-            (report.text || tr("loadingModel")) +
-            " · " + percent + "%",
-            percent
-          );
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VELNORA | The World's AI-Powered Business Ecosystem</title>
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --card-bg: #111827;
+            --accent-color: #6366f1;
+            --accent-hover: #4f46e5;
+            --text-main: #f9fafb;
+            --text-muted: #9ca3af;
+            --border-color: #1f2937;
         }
-      });
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        header {
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            color: var(--text-main);
+        }
+        .logo span {
+            color: var(--accent-color);
+        }
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            text-align: center;
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            max-width: 800px;
+            line-height: 1.2;
+        }
+        h1 span {
+            background: linear-gradient(to right, #818cf8, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        p.subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+        .hub-box {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 30px;
+            width: 100%;
+            max-width: 700px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+        }
+        textarea {
+            width: 100%;
+            height: 120px;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            color: var(--text-main);
+            font-size: 1rem;
+            resize: none;
+            margin-bottom: 15px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        textarea:focus {
+            border-color: var(--accent-color);
+        }
+        button {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+            width: 100%;
+        }
+        button:hover {
+            background-color: var(--accent-hover);
+        }
+        button:active {
+            transform: scale(0.98);
+        }
+        #result-area {
+            margin-top: 20px;
+            text-align: right;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            display: none;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            border-top: 1px solid var(--border-color);
+        }
+        @media(max-width: 768px) {
+            h1 { font-size: 2rem; }
+            header { padding: 15px 20px; }
+        }
+    </style>
+</head>
+<body>
 
-      setStatus(tr("ready"), 100);
-      return engine;
-    } finally {
-      clearInterval(watchdog);
-    }
-  })();
+    <header>
+        <div class="logo">VELNORA<span>.</span></div>
+        <div style="font-size: 0.9rem; color: var(--text-muted);">Global Intelligence Ecosystem</div>
+    </header>
 
-  try {
-    return await loadingPromise;
-  } finally {
-    loadingPromise = null;
-  }
-}
+    <main>
+        <h1>منظومة أعمالك الذكية <span>في مكان واحد</span></h1>
+        <p class="subtitle">اكتب فكرة مشروعك أو هدفك الرقمي، وسيقوم مركز VELNORA الذكي بتحليل المتطلبات وتخطيط مسار العمل المتكامل لك.</p>
 
-function errorMessage(error) {
-  const message = error?.message || String(error);
+        <div class="hub-box">
+            <textarea id="user-goal" placeholder="مثال: أريد إطلاق متجر إلكتروني لبيع منتجات العناية بالبشرة..."></textarea>
+            <button onclick="analyzeGoal()">تحليل وتخطيط المشروع ⚡</button>
+            
+            <div id="result-area">
+                <strong>جاري تحليل المشروع عبر منظومة VELNORA...</strong><br>
+                <span id="output-text"></span>
+            </div>
+        </div>
+    </main>
 
-  if (message === "WEBGPU_UNAVAILABLE") {
-    return tr("noWebGPU");
-  }
+    <footer>
+        &copy; 2026 VELNORA Inc. All rights reserved.
+    </footer>
 
-  return tr("error") + message.slice(0, 500);
-}
+    <script>
+        function analyzeGoal() {
+            const goal = document.getElementById('user-goal').value.trim();
+            const resultArea = document.getElementById('result-area');
+            const outputText = document.getElementById('output-text');
 
-form.addEventListener("submit", async event => {
-  event.preventDefault();
+            if (!goal) {
+                alert('الرجاء إدخال فكرة أو هدف المشروع أولاً!');
+                return;
+            }
 
-  const message = input.value.trim();
-  if (!message || sendButton.disabled) return;
+            resultArea.style.display = 'block';
+            outputText.innerHTML = 'جاري معالجة المتطلبات عبر أقسام الذكاء الاصطناعي والتسويق والأتمتة...';
 
-  addMessage(message, "user");
-  input.value = "";
-  sendButton.disabled = true;
+            setTimeout(() => {
+                outputText.innerHTML = `
+                    ✅ <strong>تم إنشاء مسار العمل بنجاح لمشروعك:</strong><br>
+                    1. <strong>الاستراتيجية والسوق:</strong> تم تحديد الجمهور المستهدف وتحليل أولي للمنافسين.<br>
+                    2. <strong>الهوية البصرية:</strong> المقترح جاهز للتصميم وتحديد الألوان.<br>
+                    3. <strong>المنصة الرقمية:</strong> جاهزة للتطوير والربط عبر قسم التجارة الإلكترونية.<br>
+                    4. <strong>التسويق والأتمتة:</strong> تم إعداد خطة الحملات الأولية وأتمتة خدمة العملاء.<br>
+                    <em>(هذه مجرد معاينة تجريبية للنواة الأولى - سيتم ربطها بنظام الذكاء الاصطناعي الكامل قريباً).</em>
+                `;
+            }, 1500);
+        }
+    </script>
 
-  const bubble = addMessage(tr("loadingLibrary"), "ai");
-
-  try {
-    const ai = await loadAI(bubble);
-
-    setStatus(tr("thinking"), 100);
-    bubble.textContent = tr("thinking");
-
-    conversation.push({role:"user", content:message});
-
-    const systemPrompt = language === "ar"
-      ? "أنت VELNORA، مساعد ذكي مفيد. أجب بالعربية ما لم يطلب المستخدم لغة أخرى. كن واضحاً وعملياً وصادقاً، ولا تدّع تنفيذ شيء لم تنفذه."
-      : "You are VELNORA, a helpful AI assistant. Answer clearly and honestly. Never claim to have performed actions you have not actually performed.";
-
-    const result = await ai.chat.completions.create({
-      messages: [
-        {role:"system", content:systemPrompt},
-        ...conversation.slice(-10)
-      ],
-      temperature:0.7,
-      max_tokens:500
-    });
-
-    const reply =
-      result.choices?.[0]?.message?.content?.trim();
-
-    if (!reply) throw new Error("EMPTY_REPLY");
-
-    conversation.push({role:"assistant", content:reply});
-    bubble.textContent = reply;
-    setStatus(tr("ready"), 100);
-
-  } catch (error) {
-    console.error("VELNORA AI error:", error);
-
-    bubble.textContent = error.message === "EMPTY_REPLY"
-      ? tr("empty")
-      : errorMessage(error);
-
-    setStatus(bubble.textContent, 0);
-  } finally {
-    sendButton.disabled = false;
-    messages.scrollTop = messages.scrollHeight;
-  }
-});
-
-applyLanguage("ar");
-applyTheme(root.dataset.theme === "light" ? "light" : "dark");
-</script>
 </body>
 </html>
